@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<game xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <palette>
+    <color bank="0" index="68" r="192" g="96" b="32" />
+    <color bank="0" index="69" r="160" g="64" b="32" />
+    <color bank="0" index="72" r="254" g="0" b="255" />
+    <color bank="0" index="86" r="96" g="0" b="128" />
+    <color bank="0" index="87" r="128" g="32" b="160" />
+    <color bank="0" index="88" r="160" g="64" b="192" />
+    <color bank="0" index="89" r="192" g="96" b="224" />
+    <color bank="0" index="90" r="224" g="96" b="0" />
+    <color bank="0" index="91" r="160" g="64" b="0" />
+    <color bank="0" index="92" r="96" g="32" b="0" />
+  </palette>
+  <objects>
+    <object name="Ears" script="Global/Ears.txt" forceLoad="true" />
+    <object name="Cork" script="Global/Cork.txt" forceLoad="true" />
+  </objects>
+  <variables>
+    <variable name="FangCoolDown" value="0" />
+  </variables>
+  <sounds>
+    <soundfx name="TripJump" path="TripDoubleJump.ogg" />
+    <soundfx name="TripClimb" path="TripWallClimb.ogg" />
+    <soundfx name="TripCling" path="TripWallCling.ogg" />
+  </sounds>
+  <players>
+    <player name="UN" />
+    <player name="UN" />
+    <player name="UN" />
+    <player name="UN" />
+    <player name="UN" />
+    <player name="UN" />
+    <player name="UN" />
+    <player name="TRIP" />
+    <player name="RABBIT" />
+    <player name="FANG" />
+  </players>
+  <presentationStages />
+  <regularStages />
+  <specialStages />
+  <bonusStages />
+</game>
