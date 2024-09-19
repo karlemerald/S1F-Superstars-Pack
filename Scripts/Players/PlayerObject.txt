@@ -2852,15 +2852,19 @@ function PlayerObject_HandleRabbitGrab
 			temp3 += 0x100000
 
 			temp5 = object[arrayPos0].value4
-			temp5 -= 0x100000
+			temp5 += 0x100000
 
 			temp6 = object[arrayPos0].value4
-			temp6 += 0x100000
+			temp6 -= 0x100000
 				
 			CheckGreater(object.xpos, temp2)
 			temp4 = checkResult
 			CheckLower(object.xpos, temp3)
 			temp4 &= checkResult
+			CheckLower(object.ypos, temp5)
+			temp4 &= checkResult		
+			CheckGreater(object.ypos, temp6)
+			temp4 &= checkResult			
 			if temp4 == 1
 				temp0 = 1
 			end if
@@ -2886,10 +2890,12 @@ function PlayerObject_HandleRabbitGrab
 				object.angle = 0
 				object.collisionMode = CMODE_FLOOR
 			else
-				object.animation = 49
-				
 				if EarControl == 1
+					object.animation = 49
 					object.frame = 1
+				else
+					object.animation = 49
+					object.frame = 0				
 				end if
 				
 				object.tileCollisions = 0
@@ -2961,13 +2967,15 @@ function PlayerObject_HandleRabbitGrab
 				object.angle = 0
 				object.collisionMode = CMODE_FLOOR
 			else
-				object.animation = 49
+				if EarControl == 1
+					object.animation = 49
+					object.frame = 1
+				else
+					object.animation = 49
+					object.frame = 0				
+				end if
 				object.tileCollisions = 0
 				//object.xpos = object[arrayPos0].value3
-
-				if EarControl == 1
-					object.frame = 1
-				end if
 
 				temp1 = object[arrayPos0].value4
 				temp1 -= object.ypos

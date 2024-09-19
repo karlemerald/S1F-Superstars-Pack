@@ -50,8 +50,16 @@ event ObjectMain
 			arrayPos0 = object.value5
 			object.value3 = object[arrayPos0].xpos
 			object.value4 = object[arrayPos0].ypos
+
+			if object.size > 30
+				object.size -= 11
+				object.endEarThing -= 0x90000
+			else
+				object.size = 30
+				object.type = TypeName[Blank Object]
+			end if	
+			EditFrame(0, -2, -11, object.size, 7, 118, 70)
 		
-			object.type = TypeName[Blank Object]
 			break
 		case 3 //Strech it back
 			if object.size > 30
