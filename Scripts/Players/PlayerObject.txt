@@ -2721,29 +2721,24 @@ function PlayerObject_StartRabbitGrab
 	case 0
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 0, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE
-		object[arrayPos0].drawOrder = object.drawOrder
 		object[arrayPos0].direction = object.direction
-		object[arrayPos0].drawOrder++
 		arrayPos0++
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE		
 		break
 	case 1
+	case 2
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 1, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE
-		object[arrayPos0].drawOrder = object.drawOrder
 		object[arrayPos0].direction = object.direction
-		object[arrayPos0].drawOrder++
 		arrayPos0++
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE		
 		break
-	case 2
+	case 3
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 2, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE
-		object[arrayPos0].drawOrder = object.drawOrder
 		object[arrayPos0].direction = object.direction
-		object[arrayPos0].drawOrder++
 		arrayPos0++
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 3, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE		
@@ -2772,8 +2767,9 @@ function PlayerObject_RabbitGrab
 				CallFunction(PlayerObject_SuperTransform)
 			end if
 		end if
-		if inputDown.buttonB == 1
-			if EarButtonCheck == 0
+		switch EarButtonCheck
+		case 0
+			if inputDown.buttonB == 1
 				if inputDown.Up == 1
 					temp0 = inputDown.left
 					temp0 |= inputDown.right
@@ -2787,10 +2783,17 @@ function PlayerObject_RabbitGrab
 				end if	
 				EarButtonCheck = 1
 				CallFunction(PlayerObject_StartRabbitGrab)
-			else
-				EarButtonCheck = 0
 			end if	
-		end if
+			break
+		case 1
+		case 3
+			EarButtonCheck = inputDown.buttonB
+			EarButtonCheck += 2
+			break
+		case 2	
+			EarButtonCheck = 0
+			break
+		end switch
 	end if
 end function
 
@@ -2843,7 +2846,15 @@ function PlayerObject_HandleRabbitGrab
 			temp1 = object[arrayPos0].value3
 			temp1 -= object.xpos
 			temp1 /= 3
+			object.xvel = 0
+			object.speed = 0
 			object.xpos += temp1
+
+			temp1 = object[arrayPos0].value4
+			temp1 -= object.ypos
+			temp1 /= 2
+			object.yvel = 0
+			object.ypos += temp1
 			
 			temp2 = object[arrayPos0].value3
 			temp2 -= 0x100000
@@ -2874,10 +2885,10 @@ function PlayerObject_HandleRabbitGrab
 				object.ypos = object[arrayPos0].value4
 				RabbitObjectCheck = 0
 				object.animation = ANI_JUMPING
+				object.gravity = GRAVITY_AIR
 				object.tileCollisions = 1
 				object.interaction = 1
 				object.state = PlayerObject_HandleAir
-				object.gravity = GRAVITY_AIR
 				object.yvel = -0x70000
 
 				object.xvel = 0
@@ -2899,12 +2910,7 @@ function PlayerObject_HandleRabbitGrab
 				end if
 				
 				object.tileCollisions = 0
-				//object.xpos = object[arrayPos0].value3
-				
-				temp1 = object[arrayPos0].value4
-				temp1 -= object.ypos
-				temp1 /= 3
-				object.ypos += temp1		
+				//object.xpos = object[arrayPos0].value3	
 			end if
 			break
 		end switch	
@@ -2934,22 +2940,40 @@ function PlayerObject_HandleRabbitGrab
 			temp1 = object[arrayPos0].value3
 			temp1 -= object.xpos
 			temp1 /= 3
+			object.xvel = 0
+			object.speed = 0
 			object.xpos += temp1
+
+			temp1 = object[arrayPos0].value4
+			temp1 -= object.ypos
+			temp1 /= 2
+			object.yvel = 0
+			object.ypos += temp1
 			
 			temp2 = object[arrayPos0].value3
-			temp2 -= 0xA0000
+			temp2 -= 0x100000
 
 			temp3 = object[arrayPos0].value3
-			temp3 += 0xA0000
+			temp3 += 0x100000
+
+			temp5 = object[arrayPos0].value4
+			temp5 += 0x100000
+
+			temp6 = object[arrayPos0].value4
+			temp6 -= 0x100000
 				
 			CheckGreater(object.xpos, temp2)
 			temp4 = checkResult
 			CheckLower(object.xpos, temp3)
 			temp4 &= checkResult
+			CheckGreater(object.ypos, temp5)
+			temp4 &= checkResult		
+			CheckLower(object.ypos, temp6)
+			temp4 &= checkResult			
 			if temp4 == 1
 				temp0 = 1
 			end if
-	
+
 			if temp0 == 1
 				object.xpos = object[arrayPos0].value3
 				object.ypos = object[arrayPos0].value4
@@ -2975,12 +2999,7 @@ function PlayerObject_HandleRabbitGrab
 					object.frame = 0				
 				end if
 				object.tileCollisions = 0
-				//object.xpos = object[arrayPos0].value3
-
-				temp1 = object[arrayPos0].value4
-				temp1 -= object.ypos
-				temp1 /= 3
-				object.ypos += temp1		
+				//object.xpos = object[arrayPos0].value3	
 			end if
 			break			
 		end switch	
@@ -6590,7 +6609,8 @@ event ObjectMain
 		CallFunction(object.state)
 		ProcessAnimation()
 		if object.entityPos == screen.cameraTarget
-			if stage.playerListPos == 13
+			switch stage.playerListPos 
+			case 13
 				if object.animation == ANI_GLIDING
 					screen.adjustCameraY = player.jumpOffset
 				else
@@ -6603,7 +6623,8 @@ event ObjectMain
 						end if
 					end if	
 				end if
-			else
+				break			
+			default	
 				if object.animation == ANI_JUMPING
 					screen.adjustCameraY = player.jumpOffset
 				else
@@ -6611,8 +6632,9 @@ event ObjectMain
 						screen.adjustCameraY = 0
 						object.iypos += player.jumpOffset
 					end if
-				end if				
-			end if				
+				end if
+				break
+			end switch
 		end if
 		if player.collisionEnabled == 0
 			temp0 = player.prevGravity

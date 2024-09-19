@@ -101,9 +101,9 @@ event ObjectMain
 				object[arrayPos0].EnemyX = object.xpos
 				object[arrayPos0].EnemyY = object.ypos
 				object[arrayPos0].alive = object.entityPos
-				RabbitObjectCheck = 0
 				object[arrayPos0].state = 2			
 			end if
+			RabbitObjectCheck = 0	
 			object.xvel = 0
 			object.yvel = 0
 		end if

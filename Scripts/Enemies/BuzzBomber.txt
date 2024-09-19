@@ -184,7 +184,8 @@ event ObjectMain
 				object[arrayPos1].EnemyX = object.xpos
 				object[arrayPos1].EnemyY = object.ypos
 				object[arrayPos1].state = 2		
-				object[arrayPos0].type = TypeName[Blank Object]		
+				object[arrayPos1].alive = object.entityPos	
+				//object[arrayPos0].type = TypeName[Blank Object]		
 			else
 				object[arrayPos0].EnemyX = object.xpos
 				object[arrayPos0].EnemyY = object.ypos

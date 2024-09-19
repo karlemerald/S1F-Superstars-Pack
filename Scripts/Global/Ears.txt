@@ -13,7 +13,7 @@ private alias object.value2 : object.timer
 public alias object.value3 : object.EnemyX
 public alias object.value4 : object.EnemyY
 public alias object.value5 : object.alive
-private alias object.value6 : object.SpecialObjectCheck
+public alias object.value6 : object.SpecialObjectCheck
 
 public value RabbitTip = 0;
 
@@ -66,10 +66,11 @@ event ObjectMain
 				object.size -= 11
 				object.endEarThing -= 0x90000
 			else
-				object[0].state = PlayerObject_HandleAir
-				if object[0].gravity == GRAVITY_AIR
+				if object[0].animation == 51
+					object[0].state = PlayerObject_HandleAir
 					object[0].animation = ANI_JUMPING
 				else
+					object[0].state = PlayerObject_HandleGround				
 					object[0].animation = ANI_STOPPED
 				end if
 				object.size = 30
@@ -132,10 +133,11 @@ event ObjectMain
 				object.size -= 7
 				object.endEarThing += 0x70000
 			else
-				object[0].state = PlayerObject_HandleAir
-				if object[0].gravity == GRAVITY_AIR
+				if object[0].animation == 51
+					object[0].state = PlayerObject_HandleAir
 					object[0].animation = ANI_JUMPING
 				else
+					object[0].state = PlayerObject_HandleGround				
 					object[0].animation = ANI_STOPPED
 				end if
 				object.size = 20
@@ -278,10 +280,11 @@ event ObjectMain
 				object.size -= 11
 				object.endEarThing -= 0x90000
 			else
-				object[0].state = PlayerObject_HandleAir
-				if object[0].gravity == GRAVITY_AIR
+				if object[0].animation == 51
+					object[0].state = PlayerObject_HandleAir
 					object[0].animation = ANI_JUMPING
 				else
+					object[0].state = PlayerObject_HandleGround				
 					object[0].animation = ANI_STOPPED
 				end if
 				object.size = 30
@@ -345,13 +348,12 @@ event ObjectMain
 	if temp0 == 1
 		object.type = TypeName[Blank Object]
 	end if
-
 end event
 
 
 event ObjectDraw
 	if object[0].visible == 1
-	
+		object.drawOrder = object[0].value18
 		switch object.propertyvalue
 		case 0
 			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
