@@ -7,13 +7,13 @@
 
 //-------Aliases-------//
 
-public alias object.value0 : object.size
-public alias object.value1 : object.endEarThing
-public alias object.value2 : object.timer
+private alias object.value0 : object.size
+private alias object.value1 : object.endEarThing
+private alias object.value2 : object.timer
 public alias object.value3 : object.EnemyX
 public alias object.value4 : object.EnemyY
 public alias object.value5 : object.alive
-public alias object.value6 : object.SpecialObjectCheck
+private alias object.value6 : object.SpecialObjectCheck
 
 public value RabbitTip = 0;
 
@@ -72,6 +72,9 @@ event ObjectMain
 		end switch
 		object.xpos = object[0].xpos
 		object.ypos = object[0].ypos
+		if object[0].animation == 51
+			object.ypos -= 0x70000
+		end if		
 		break
 	case 1
 		switch object.state
@@ -141,12 +144,18 @@ event ObjectMain
 		
 		object.xpos = object[0].xpos
 		object.ypos = object[0].ypos
+		if object[0].animation == 51
+			object.ypos -= 0x70000
+		end if				
 		break		
 	case 4
 		switch object.state
 		case 0
 			object.xpos = object[0].xpos
 			object.ypos = object[0].ypos
+			if object[0].animation == 51
+				object.ypos -= 0x70000
+			end if				
 			currentPlayer = object[0].entityPos
 			arrayPos0 = currentPlayer
 			arrayPos0 += playerCount
@@ -168,22 +177,23 @@ event ObjectMain
 				break				
 			end switch	
 			
-			ObjectTileCollision(CSIDE_RWALL, 25, 0, 0)
-			if checkResult == 1
-				object[arrayPos0].state = 3
+			if object[arrayPos0].state != 2
+				ObjectTileCollision(CSIDE_RWALL, 25, 0, 0)
+				if checkResult == 1
+					object[arrayPos0].state = 3
+				end if	
 
-			end if	
+				ObjectTileCollision(CSIDE_ROOF, 0, 10, object[0].collisionPlane)
+				if checkResult == 1
+					object[arrayPos0].state = 3
 
-			ObjectTileCollision(CSIDE_ROOF, 0, 10, object[0].collisionPlane)
-			if checkResult == 1
-				object[arrayPos0].state = 3
-
-			end if	
-		
-			ObjectTileCollision(CSIDE_LWALL, -25, 0, 0)
-			if checkResult == 1
-				object[arrayPos0].state = 3
-			end if				
+				end if	
+			
+				ObjectTileCollision(CSIDE_LWALL, -25, 0, 0)
+				if checkResult == 1
+					object[arrayPos0].state = 3
+				end if
+			end if
 			break
 		case 1
 			object.xpos += object.xvel
@@ -274,6 +284,9 @@ event ObjectMain
 		end switch
 		object.xpos = object[0].xpos
 		object.ypos = object[0].ypos
+		if object[0].animation == 51
+			object.ypos -= 0x70000
+		end if	
 		break
 	case 3
 		currentPlayer = object[0].entityPos
@@ -309,6 +322,9 @@ event ObjectMain
 		object.xpos += temp0		
 		object.ypos = object[0].ypos
 		object.ypos -= object[arrayPos0].endEarThing
+		if object[0].animation == 51
+			object.ypos -= 0x70000
+		end if			
 		break
 	end switch	
 	
@@ -327,6 +343,7 @@ end event
 
 event ObjectDraw
 	if object[0].visible == 1
+	
 		switch object.propertyvalue
 		case 0
 			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
@@ -358,6 +375,9 @@ event ObjectDraw
 			temp1 = object.endEarThing
 			FlipSign(temp1)
 			temp1 += object[0].ypos
+			if object[0].animation == 51
+				temp1 -= 0x70000
+			end if	
 			
 			RabbitTip = object.frame
 			RabbitTip++

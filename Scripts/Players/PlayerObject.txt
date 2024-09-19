@@ -232,6 +232,9 @@ public value PlayerObject_value19 = 0;
 public value achievement.trigger = 0;
 public value RabbitObjectCheck = 0;
 public value EarControl = 0;
+public value EarButtonCheck = 0;
+public value EarXvelCancel = 0;
+
 // Tables
 
 public table PlayerObject_RabbitSuperPal
@@ -2734,7 +2737,17 @@ function PlayerObject_StartRabbitGrab
 		arrayPos0++
 		ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
 		object[arrayPos0].priority = PRIORITY_ACTIVE		
-		break		
+		break
+	case 2
+		ResetObjectEntity(arrayPos0, TypeName[Ears], 2, 0, 0)	
+		object[arrayPos0].priority = PRIORITY_ACTIVE
+		object[arrayPos0].drawOrder = object.drawOrder
+		object[arrayPos0].direction = object.direction
+		object[arrayPos0].drawOrder++
+		arrayPos0++
+		ResetObjectEntity(arrayPos0, TypeName[Ears], 3, 0, 0)	
+		object[arrayPos0].priority = PRIORITY_ACTIVE		
+		break			
 	end switch	
 end function
 
@@ -2760,12 +2773,23 @@ function PlayerObject_RabbitGrab
 			end if
 		end if
 		if inputDown.buttonB == 1
-			if inputDown.Up == 1
-				EarControl = 1
-			else	
-				EarControl = 0
+			if EarButtonCheck == 0
+				if inputDown.Up == 1
+					temp0 = inputDown.left
+					temp0 |= inputDown.right
+					if temp0 == 1
+						EarControl = 2				
+					else
+						EarControl = 1
+					end if	
+				else	
+					EarControl = 0
+				end if	
+				EarButtonCheck = 1
+				CallFunction(PlayerObject_StartRabbitGrab)
+			else
+				EarButtonCheck = 0
 			end if	
-			CallFunction(PlayerObject_StartRabbitGrab)
 		end if
 	end if
 end function
@@ -2798,7 +2822,7 @@ function PlayerObject_HandleRabbitGrab
 				else
 					object.speed = 0
 				end if
-			end if
+			end if		
 			break
 		case 2		
 			arrayPos1 = object[arrayPos0].value5
@@ -2815,7 +2839,32 @@ function PlayerObject_HandleRabbitGrab
 				temp0 = 1
 				break
 			end switch
-	
+
+			temp1 = object[arrayPos0].value3
+			temp1 -= object.xpos
+			temp1 /= 3
+			object.xpos += temp1
+			
+			temp2 = object[arrayPos0].value3
+			temp2 -= 0x100000
+
+			temp3 = object[arrayPos0].value3
+			temp3 += 0x100000
+
+			temp5 = object[arrayPos0].value4
+			temp5 -= 0x100000
+
+			temp6 = object[arrayPos0].value4
+			temp6 += 0x100000
+				
+			CheckGreater(object.xpos, temp2)
+			temp4 = checkResult
+			CheckLower(object.xpos, temp3)
+			temp4 &= checkResult
+			if temp4 == 1
+				temp0 = 1
+			end if
+
 			if temp0 == 1
 				object.xpos = object[arrayPos0].value3
 				object.ypos = object[arrayPos0].value4
@@ -2827,6 +2876,10 @@ function PlayerObject_HandleRabbitGrab
 				object.gravity = GRAVITY_AIR
 				object.yvel = -0x70000
 
+				object.xvel = 0
+				object.speed = 0
+
+				EarXvelCancel = 1
 				object.controlLock = 0
 				
 				object.scrollTracking = 1
@@ -2834,9 +2887,18 @@ function PlayerObject_HandleRabbitGrab
 				object.collisionMode = CMODE_FLOOR
 			else
 				object.animation = 49
+				
+				if EarControl == 1
+					object.frame = 1
+				end if
+				
 				object.tileCollisions = 0
-				object.xpos = object[arrayPos0].value3
-				object.ypos = object[arrayPos0].value4			
+				//object.xpos = object[arrayPos0].value3
+				
+				temp1 = object[arrayPos0].value4
+				temp1 -= object.ypos
+				temp1 /= 3
+				object.ypos += temp1		
 			end if
 			break
 		end switch	
@@ -2857,11 +2919,30 @@ function PlayerObject_HandleRabbitGrab
 			case 1
 				CheckEqual(object[arrayPos1].type, TypeName[Broken Monitor])
 				temp0 = checkResult
-				break			
+				break	
 			case 2
 				temp0 = 1
-				break				
+				break
 			end switch
+
+			temp1 = object[arrayPos0].value3
+			temp1 -= object.xpos
+			temp1 /= 3
+			object.xpos += temp1
+			
+			temp2 = object[arrayPos0].value3
+			temp2 -= 0xA0000
+
+			temp3 = object[arrayPos0].value3
+			temp3 += 0xA0000
+				
+			CheckGreater(object.xpos, temp2)
+			temp4 = checkResult
+			CheckLower(object.xpos, temp3)
+			temp4 &= checkResult
+			if temp4 == 1
+				temp0 = 1
+			end if
 	
 			if temp0 == 1
 				object.xpos = object[arrayPos0].value3
@@ -2875,15 +2956,23 @@ function PlayerObject_HandleRabbitGrab
 				object.yvel = -0x70000
 
 				object.controlLock = 0
-				
+				EarXvelCancel = 1
 				object.scrollTracking = 1
 				object.angle = 0
 				object.collisionMode = CMODE_FLOOR
 			else
 				object.animation = 49
 				object.tileCollisions = 0
-				object.xpos = object[arrayPos0].value3
-				object.ypos = object[arrayPos0].value4			
+				//object.xpos = object[arrayPos0].value3
+
+				if EarControl == 1
+					object.frame = 1
+				end if
+
+				temp1 = object[arrayPos0].value4
+				temp1 -= object.ypos
+				temp1 /= 3
+				object.ypos += temp1		
 			end if
 			break			
 		end switch	
@@ -3323,15 +3412,30 @@ function PlayerObject_HandleGround
 		if stage.playerListPos == 14
 			if object.controlMode >= 0
 				if inputDown.buttonB == 1
-					if inputDown.Up == 1
-						EarControl = 1
-					else	
-						EarControl = 0
-					end if	
-					CallFunction(PlayerObject_StartRabbitGrab)
+					if object.pushing != 2
+						if EarButtonCheck == 0
+							if inputDown.Up == 1
+								temp0 = inputDown.left
+								temp0 |= inputDown.right
+								if temp0 == 1
+									EarControl = 2				
+								else
+									EarControl = 1
+								end if	
+							else	
+								EarControl = 0
+							end if	
+							EarButtonCheck = 1
+							CallFunction(PlayerObject_StartRabbitGrab)
+						end if	
+					end if
+				else
+					EarButtonCheck = 0
 				end if
 			end if	
 		end if
+
+
 		
 		if player.skidding > 0
 			if temp7 == 1
@@ -3509,9 +3613,17 @@ end function
 
 
 function PlayerObject_HandleAir
-		CallFunction(PlayerObject_HandleAirAcceleration)
+		if EarXvelCancel == 0
+			CallFunction(PlayerObject_HandleAirAcceleration)
+		else
+			EarXvelCancel = 0
+		end if			
 		if object.gravity == GRAVITY_AIR
-			CallFunction(PlayerObject_HandleAirMovement)
+			if EarXvelCancel == 0
+				CallFunction(PlayerObject_HandleAirMovement)
+			else
+				EarXvelCancel = 0
+			end if	
 			if object.yvel > 0x20000
 				if object.animation == ANI_FLAILING1
 					object.animation = ANI_WALKING
@@ -4024,8 +4136,17 @@ function PlayerObject_LookingUp
 			if stage.playerListPos == 14
 				if object.controlMode >= 0
 					if inputDown.buttonB == 1
-						EarControl = 1
-						CallFunction(PlayerObject_StartRabbitGrab)
+						if EarButtonCheck == 0
+							if inputDown.right == 1
+								EarControl = 2							
+							else
+								EarControl = 1
+							end if	
+							CallFunction(PlayerObject_StartRabbitGrab)
+							EarButtonCheck = 1
+						else	
+							EarButtonCheck = 0
+						end if
 					end if
 				end if	
 			end if	
