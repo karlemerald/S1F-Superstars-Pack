@@ -311,6 +311,9 @@ function Draw_Lives
 				break
 			case 13
 				temp2 = 215
+				break	
+			case 15
+				temp2 = 226
 				break					
 		end switch
 		DrawSpriteXY(temp2, temp0, temp1)
@@ -349,7 +352,10 @@ function Draw_Lives
 				break		
 			case 13
 				temp2 = 216
-				break					
+				break
+			case 15
+				temp2 = 227
+				break										
 		end switch
 		DrawSpriteXY(temp2, temp0, temp1)
 	end if
@@ -736,14 +742,27 @@ function FangPop
 	temp1 = object.ypos
 	temp1 -= 0x120000
 	DrawSpriteXY(60, temp0, temp1)
-	if pop.frame > -1
+	if pop.frame > 6
 		CallFunction(FangIdle)
 	else
 		temp2 = pop.frame
-		temp2 += 199
+		temp2 += 217
 		DrawSpriteXY(temp2, temp0, temp1)
+
 		pop.timer++
-		if pop.timer > 4
+		switch pop.frame 
+		case 3
+			temp0 = 8
+			slot.handframe = 20
+			break
+		case 6
+			temp0 = 15
+			break	
+		default	
+			temp0 = 4
+			break
+		end switch
+		if pop.timer > temp0
 			pop.frame++
 			pop.timer = 0
 		end if
@@ -753,11 +772,38 @@ end function
 function FangIdle
 	temp0 = object.xpos
 	temp1 = object.ypos
-	temp1 -= 0x120000
+	temp1 -= 0x120000	
 	DrawSpriteXY(60, temp0, temp1)
-	DrawSpriteXY(214, temp0, temp1)
-	
 
+	if slot.handframe < 16
+		DrawSpriteXY(222, temp0, temp1)
+	else
+		DrawSpriteXY(223, temp0, temp1)
+	end if
+
+	if save.highlight == object.propertyValue
+		if slot.blinkframe == 0
+			rand(slot.blinkframe, 480)
+			slot.blinkframe += 120
+		else
+			slot.blinkframe--
+		end if
+		
+		temp2 = slot.blinkframe
+		temp2 >>= 2
+		switch temp2
+			case 1
+			case 3
+				DrawSpriteXY(224, temp0, temp1)
+				break	
+			case 2
+				DrawSpriteXY(225, temp0, temp1)
+				break					
+		end switch
+		
+		slot.handframe++
+		slot.handframe%= 32
+	end if
 end function
 
 function TripPop
@@ -1614,7 +1660,7 @@ event ObjectStartup
 	SpriteFrame(-21, -28, 41, 28, 403, 239) //154 Knux Base
 	SpriteFrame(-23, -28, 45, 28, 398, 268) //155 Knux Base
 
-	SpriteFrame(-11, -30, 43, 30, 358, 121) //156 Rabbit Base
+	SpriteFrame(-14, -30, 46, 30, 355, 121) //156 Rabbit Base
 	SpriteFrame(0, 0, 0, 0, 331, 20) //157 RABBIT
 	
 	temp0 = 0
@@ -1635,11 +1681,11 @@ event ObjectStartup
 	SpriteFrame(-23, -31, 36, 31, 354, 152) //193 Rabbit Base
 	SpriteFrame(-25, -30, 57, 30, 344, 121) //194 Rabbit Base
 	
-	SpriteFrame(-25, -18, 12, 18, 354, 184) //195 Rabbit Hand 1
-	SpriteFrame(-27, -18, 14, 18, 367, 184) //196 Rabbit Hand 2
+	SpriteFrame(-25, -20, 12, 18, 354, 184) //195 Rabbit Hand 1
+	SpriteFrame(-27, -19, 14, 17, 367, 185) //196 Rabbit Hand 2
 
-	SpriteFrame(-9, -22, 15, 13, 312, 148) //197 Rabbit Blink 1
-	SpriteFrame(-9, -22, 15, 13, 328, 148) //198 Rabbit Blink 2
+	SpriteFrame(-10, -22, 15, 13, 312, 148) //197 Rabbit Blink 1
+	SpriteFrame(-10, -22, 15, 13, 328, 148) //198 Rabbit Blink 2
 
 	temp0 = 0
 	temp1 = 94
@@ -1653,7 +1699,22 @@ event ObjectStartup
 	SpriteFrame(-20, -30, 40, 30, 584, 63) //214 FANG PLACHOLDER
 	SpriteFrame(-14, -1, 14, 13, 538, 498)  //215 Trip Life
 	SpriteFrame(-16, -2, 16, 24, 521, 487) //216 Trip Continue
-	
+
+	SpriteFrame(-22, -10, 43, 10, 558, 1) //217 Fang Ani 
+	SpriteFrame(-22, -17, 43, 17, 602, 1) //218 Fang Ani 
+	SpriteFrame(-22, -28, 43, 28, 524, 15) //219 Fang Ani 
+	SpriteFrame(-22, -31, 43, 31, 524, 44) //220 Fang Ani 
+	SpriteFrame(-26, -31, 48, 31, 568, 19) //221 Fang Ani 
+
+	SpriteFrame(-24, -33, 47, 33, 568, 51) //222 Fang Ani 1
+	SpriteFrame(-25, -32, 48, 32, 617, 19) //223 Fang Ani 2
+
+	SpriteFrame(-10, -22, 15, 11, 616, 52) //224 Fang Blink 1
+	SpriteFrame(-10, -22, 15, 11, 632, 52) //225 Fang Blink 2
+
+	SpriteFrame(-16, -2, 16, 14, 616, 64)  //226 Fang Life
+	SpriteFrame(-20, -3, 24, 25, 633, 64) //227 Fang Continue
+
 	screen.cameraEnabled = 0
 	temp0 = 0
 	arrayPos0 = 10

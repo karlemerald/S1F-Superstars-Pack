@@ -478,7 +478,7 @@ event ObjectDraw
 	switch fade.control
 		case 0
 			fade.effect = 256
-			SetScreenFade(0, 0, 0, fade.effect)
+			SetClassicFade(0, 0, 0, fade.effect)
 			fade.control++
 			break
 		case 1
@@ -487,7 +487,7 @@ event ObjectDraw
 			else
 				fade.control++
 			end if
-			SetScreenFade(0, 0, 0, fade.effect)
+			SetClassicFade(0, 0, 0, fade.effect)
 			break
 		case 2
 			PlayMusic(1)
@@ -503,10 +503,10 @@ event ObjectDraw
 				StopMusic()
 				fade.control++
 			end if
-			SetScreenFade(0, 0, 0, fade.effect)
+			SetClassicFade(0, 0, 0, fade.effect)
 			break
 		case 5
-			SetScreenFade(0, 0, 0, 256)
+			SetClassicFade(0, 0, 0, 256)
 			break
 		case 6
 			PlaySfx(SfxName[Warp], 0)
@@ -527,11 +527,11 @@ event ObjectDraw
 				LoadPalette("SpecialStage.act",0,0,0,128)
 				fade.control++
 			end if
-			SetScreenFade(color6, color7, color6, fade.effect)
+			SetClassicFade(color6, color7, color6, fade.effect)
 			break
 		case 8
 			StopMusic()
-			SetScreenFade(color6, color7, color6, 255)
+			SetClassicFade(color6, color7, color6, 255)
 		break
 	end switch	
 	

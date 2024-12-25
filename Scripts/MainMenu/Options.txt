@@ -21,6 +21,28 @@ private alias object.value18 : row.highlight
 private alias object.value19 : column.highlight
 private alias object.value20 : object.lineX
 
+// Superstars
+public alias saveRAM[304] : saved.TripMaxDash
+public alias saveRAM[305] : saved.FangMaxDash
+public alias saveRAM[306] : saved.RabbitMaxDash
+public alias saveRAM[307] : saved.FangName
+
+// platformID aliases
+
+// these are commented out because they are in the engine script.cpp, but it's good to have them here for reference.
+// if any of you don't know how the engine.platformID case works, i will refer you to line 25 of this text file. - Cosmic
+
+// private alias 0 : RETRO_WIN
+// private alias 1 : RETRO_OSX
+// private alias 2 : RETRO_XBOX_360
+// private alias 3 : RETRO_PS3
+// private alias 4 : RETRO_iOS
+// private alias 5 : RETRO_ANDROID
+// private alias 6 : RETRO_WP7
+// private alias 7 : RETRO_UWP
+// private alias 8 : RETRO_LINUX
+// private alias 9 : RETRO_SWITCH
+
 private alias 0 : TEXT_LEFT_ALIGN
 private alias 1 : TEXT_RIGHT_ALIGN
 private alias 2 : TEXT_CENTER_ALIGN
@@ -29,13 +51,9 @@ private alias 1 : HEADER_TEXT_BLUE
 private alias 2 : HEADER_TEXT_GOLD
 private alias 55 : text.margin.right
 
-public alias saveRAM[304] : saved.TripMaxDash
-public alias saveRAM[305] : saved.FangMaxDash
-public alias saveRAM[306] : saved.RabbitMaxDash
-public alias saveRAM[307] : saved.FangName
-
 // Function declarations
 reserve function display.menu
+reserve function displaystndrd.menu
 reserve function displaymob.menu
 reserve function gameplay.menu
 reserve function abilities.menu
@@ -43,6 +61,7 @@ reserve function visuals.menu
 reserve function sound.menu
 reserve function datamang.menu
 reserve function display.draw
+reserve function displaystndrd.draw
 reserve function displaymob.draw
 reserve function gameplay.draw
 reserve function abilities.draw
@@ -70,6 +89,7 @@ private value saved.scale = 0;
 private value saved.vsync = 0;
 private value saved.scalemode = 0;
 private value text.margin = 0;
+private value saved.fps = 0;
 
 private table StarList
 	2, 101, 272
@@ -214,32 +234,61 @@ end function
 
 function display.menu
 	object.curMenu = 0
-	if engine.platformID > 0
+	switch engine.platformID
+	case RETRO_WIN:
+	case RETRO_OSX:
+	case RETRO_XBOX_360:
+	case RETRO_PS3:
+		CallFunction(displaystndrd.menu)
+		break
+	case RETRO_iOS:
+	case RETRO_ANDROID:
+	case RETRO_WP7:
 		CallFunction(displaymob.menu)
-	else
-		CallFunction(main.sound)
+		break
+	case RETRO_UWP:
+	case RETRO_LINUX:
+		CallFunction(displaystndrd.menu)
+		break
+	case RETRO_SWITCH:
+		CallFunction(displaymob.menu)
+		break
+	end switch
+end function
+
+function displaystndrd.menu
+	CallFunction(main.sound)
 		if inputPress.up == 1
 			menu.highlight--
 			if menu.highlight < 0
 				if saved.mobile == 1
-					menu.highlight = 8
+					menu.highlight = 9
 				else
-					menu.highlight = 7
+					menu.highlight = 8
 				end if
 			end if
 		else	
 			if inputPress.down == 1
 				menu.highlight++
 				if saved.mobile == 1
-					if menu.highlight > 8
+					if menu.highlight > 9
 						menu.highlight = 0
 					end if
 				else
-					if menu.highlight > 7
+					if menu.highlight > 8
 						menu.highlight = 0
 					end if
 				end if
 			end if
+		end if
+		
+		if inputPress.buttonL == 1
+			object.state = datamang.menu
+			menu.highlight = 0
+		end if
+		if inputPress.buttonR == 1
+			object.state = gameplay.menu
+			menu.highlight = 0
 		end if
 		
 
@@ -264,6 +313,9 @@ function display.menu
 				if inputPress.left == 1
 					switch screen.xsize
 						case 320
+							CallNativeFunction2(SetScreenWidth, 384, 0)
+							break
+						case 384
 							CallNativeFunction2(SetScreenWidth, 426, 0)
 							break
 						case 426
@@ -280,8 +332,11 @@ function display.menu
 						case 320
 							CallNativeFunction2(SetScreenWidth, 426, 0)
 							break
-						case 426
+						case 384
 							CallNativeFunction2(SetScreenWidth, 320, 0)
+							break
+						case 426
+							CallNativeFunction2(SetScreenWidth, 384, 0)
 							break
 						default
 							CallNativeFunction2(SetScreenWidth, 426, 0)
@@ -332,13 +387,13 @@ function display.menu
 				if inputPress.left == 1
 					saved.language--
 					if saved.language < 0
-						saved.language = 2
+						saved.language = 3
 					end if
 					CallFunction(Lang_Init)
 				end if
 				if inputPress.right == 1
 					saved.language++
-					if saved.language > 2
+					if saved.language > 3
 						saved.language = 0
 					end if
 					CallFunction(Lang_Init)
@@ -368,7 +423,19 @@ function display.menu
 					CallNativeFunction2(SetWindowScaleMode, saved.scalemode, 0)
 				end if
 				break
-			case 8 // Button Visability 
+			case 8 // Refresh Rate
+				temp0 = inputPress.left
+				temp0 |= inputPress.right
+				if temp0 == 1
+					if saved.fps == 60
+						saved.fps = 50
+					else
+						saved.fps = 60
+					end if
+					CallNativeFunction2(SetFrameRate, saved.fps, 0)
+				end if
+				break
+			case 9 // Button Visability 
 				if inputPress.left == 1	
 					touch.fade = 0				
 					saved.transmobile--
@@ -385,7 +452,6 @@ function display.menu
 				end if
 				break
 		end switch
-	end if
 end function
 
 function displaymob.menu
@@ -412,6 +478,15 @@ function displaymob.menu
 				end if
 			end if
 		end if
+	end if
+
+	if inputPress.buttonL == 1
+		object.state = datamang.menu
+		menu.highlight = 0
+	end if
+	if inputPress.buttonR == 1
+		object.state = gameplay.menu
+		menu.highlight = 0
 	end if
 	
 	switch menu.highlight
@@ -448,13 +523,13 @@ function displaymob.menu
 			if inputPress.left == 1
 				saved.language--
 				if saved.language < 0
-					saved.language = 2
+					saved.language = 3
 				end if
 				CallFunction(Lang_Init)
 			end if
 			if inputPress.right == 1
 				saved.language++
-				if saved.language > 2
+				if saved.language > 3
 					saved.language = 0
 				end if
 				CallFunction(Lang_Init)
@@ -495,17 +570,25 @@ function gameplay.menu
 			end if
 		end if
 	end if
+
+	if inputPress.buttonL == 1
+		object.state = display.menu
+		menu.highlight = 0
+	end if
+	if inputPress.buttonR == 1
+		object.state = abilities.menu	
+		menu.highlight = 0
+	end if
 	
 	switch menu.highlight
 		case 0 // Gameplay Highlighted
 			if inputPress.left == 1
-				object.state = display.menu		
+				object.state = display.menu	
 			end if
 			if inputPress.right == 1
-				object.state = abilities.menu	
+				object.state = abilities.menu
 			end if
 			break
-			
 		case 1 // Emeralds
 			temp0 = inputPress.left
 			temp0 |= inputPress.right
@@ -597,6 +680,15 @@ function abilities.menu
 				menu.highlight = 0
 			end if
 		end if
+	end if
+
+	if inputPress.buttonL == 1
+		object.state = gameplay.menu
+		menu.highlight = 0
+	end if
+	if inputPress.buttonR == 1
+		object.state = visuals.menu
+		menu.highlight = 0
 	end if
 	
 	switch menu.highlight
@@ -706,6 +798,15 @@ function visuals.menu
 				menu.highlight = 0
 			end if
 		end if
+	end if
+
+	if inputPress.buttonL == 1
+		object.state = abilities.menu
+		menu.highlight = 0
+	end if
+	if inputPress.buttonR == 1
+		object.state = sound.menu
+		menu.highlight = 0
 	end if
 	
 	switch menu.highlight
@@ -905,7 +1006,7 @@ function visuals.menu
 					saved.FangName = 0
 				end if
 			end if
-			break				
+			break							
 	end switch
 end function
 
@@ -925,6 +1026,15 @@ function sound.menu
 				menu.highlight = 0
 			end if
 		end if
+	end if
+
+	if inputPress.buttonL == 1
+		object.state = visuals.menu
+		menu.highlight = 0
+	end if
+	if inputPress.buttonR == 1
+		object.state = datamang.menu
+		menu.highlight = 0
 	end if
 	
 	switch menu.highlight
@@ -1114,25 +1224,38 @@ function datamang.menu
 				break
 			end switch		
 		end if
-	else
+	else	
 		CallFunction(main.sound)
 		if inputPress.up == 1
 			menu.highlight--
 			delete.check = 0
+			delete.ticker = 0
+			StopSfx(SfxName[Warn], 0)
 			if menu.highlight < 0
-				menu.highlight = 10
+				menu.highlight = 9
 			end if
 		else	
 			if inputPress.down == 1
 				menu.highlight++
 				delete.check = 0
-				if menu.highlight > 10
+				delete.ticker = 0
+			StopSfx(SfxName[Warn], 0)
+				if menu.highlight > 9
 					menu.highlight = 0
 				end if
 			end if
 		end if
+
 		if delete.check > 2
 			delete.check = 0
+		end if
+		if inputPress.buttonL == 1
+			object.state = sound.menu
+			menu.highlight = 0
+		end if
+		if inputPress.buttonR == 1
+			object.state = display.menu
+			menu.highlight = 0
 		end if
 		
 		switch menu.highlight
@@ -1150,100 +1273,235 @@ function datamang.menu
 					arrayPos1 = 0
 					PlaySfx(SfxName[Lamp Post], 0)
 				end if
-				break			
+				break
 			case 2 // Restore Option Default
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(option.restore)
+
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(option.restore)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 3 // Clear All
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.save)
-					CallFunction(delete.ta)
-					CallFunction(delete.arcade)
-					CallFunction(delete.golf)
-					CallFunction(delete.extras)
-					CallFunction(delete.achieve)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.save)
+								CallFunction(delete.ta)
+								CallFunction(delete.arcade)
+								CallFunction(delete.golf)
+								CallFunction(delete.extras)
+								CallFunction(delete.achieve)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
-			case 4 // Clear Saves	
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+			case 4 // Clear Saves
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.save)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.save)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 5 // Clear TA		
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.ta)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.ta)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 6 // Clear Arcade
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.arcade)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.arcade)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 7 // Clear Golf
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.golf)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.golf)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 8 // Clear Extras
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.extras)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.extras)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 9 // Clear Achieve
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.achieve)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.achieve)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 			case 10 // Clear Secret
-				temp0 = inputPress.buttonA
-				if temp0 == 1
-					delete.check = 1
+				if inputPress.buttonA == 1
 					PlaySfx(SfxName[Warn], 0)
+					delete.check = 1
 				end if
-				if delete.check == 2
-					CallFunction(delete.secret)
+				
+				if inputDown.buttonA == 1
+					if delete.check == 1
+						delete.ticker++
+						if delete.ticker >= 110
+							delete.ticker = 110
+							if delete.check < 2
+								delete.check = 2
+								CallFunction(delete.secret)
+								PlaySfx(SfxName[Cleared], 0)
+								StopSfx(SfxName[Warn], 0)
+							end if
+						end if
+					end if
+				else
+					delete.check = 0
+					delete.ticker = 0
+					StopSfx(SfxName[Warn], 0)
 				end if
 				break
 		end switch
@@ -1264,20 +1522,20 @@ event ObjectMain
 		object.state = display.menu
 	end if
 	
-	if object.NameMenu == 0
-		if inputPress.buttonB == 1
+	if inputPress.buttonB == 1
+		if object.nameMenu == 1
+			object.nameMenu = 0
+		else
 			delete.check = 0
 			object.state = options.exit
 			menu.state = 2
 			WriteSaveRAM()
-			CallFunction(options.exit)	
-		else
-			CallFunction(object.state)
-		end if
+			CallFunction(options.exit)
+		end if	
 	else
-		CallFunction(object.state)	
+		CallFunction(object.state)
 	end if	
-		
+	
 	if object.state != object.prevState	
 		object.prevState = object.state
 		if object.state == display.menu
@@ -1306,7 +1564,8 @@ event ObjectMain
 end event
 
 function header.back
-	DrawRect(51, 0, screen.xsize, 71, color7, color7, color7, 255)
+	
+	DrawRect(text.margin, 0, screen.xsize, 71, color7, color7, color7, 255)
 	if menu.highlight == 0
 		temp0 = text.margin
 		temp0 -= 4
@@ -1550,13 +1809,13 @@ function datamang.draw
 	//Change Rabbit Name
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 176	
+	text.drawline = 181
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
-	text.drawline = 177
+	text.drawline = 182
 	CallFunction(option.text)
 	text.ypos += 21
 	menu.line++
@@ -1844,10 +2103,30 @@ end function
 
 
 function display.draw
-	if engine.platformID > 0
+	switch engine.platformID
+	case RETRO_WIN:
+	case RETRO_OSX:
+	case RETRO_XBOX_360:
+	case RETRO_PS3:
+		CallFunction(displaystndrd.draw)
+		break
+	case RETRO_iOS:
+	case RETRO_ANDROID:
+	case RETRO_WP7:
 		CallFunction(displaymob.draw)
-	else
-		//Fullscreen
+		break
+	case RETRO_UWP:
+	case RETRO_LINUX:
+		CallFunction(displaystndrd.draw)
+		break
+	case RETRO_SWITCH:
+		CallFunction(displaymob.draw)
+		break
+	end switch
+end function
+
+function displaystndrd.draw
+	//Fullscreen
 		text.xpos = text.margin
 		text.drawalign = TEXT_LEFT_ALIGN
 		text.drawline = 14	
@@ -1880,6 +2159,9 @@ function display.draw
 		switch screen.xsize
 		case 320
 			text.drawline = 16
+			break
+		case 384
+			text.drawline = 177
 			break
 		case 426
 			text.drawline = 17
@@ -1996,6 +2278,27 @@ function display.draw
 		text.ypos += 21
 		menu.line++
 
+		//Refresh Rate
+		text.xpos = text.margin
+		text.drawalign = TEXT_LEFT_ALIGN
+		text.drawline = 178
+		CallFunction(option.text)
+		
+		text.xpos = screen.xsize
+		text.xpos -= text.margin.right
+		text.drawalign = TEXT_CENTER_ALIGN
+		switch saved.fps
+		case 50
+			text.drawline = 179
+			break
+		case 60
+			text.drawline = 180
+			break
+		end switch
+		CallFunction(option.text)
+		text.ypos += 21
+		menu.line++
+
 		if saved.mobile == 1
 			//Button Visability 
 			text.xpos = text.margin
@@ -2040,7 +2343,6 @@ function display.draw
 		text.xpos >>= 1
 		text.xpos += screen.xcenter
 		CallFunction(header.text)
-	end if
 end function
 
 function displaymob.draw	
@@ -2767,7 +3069,14 @@ function visuals.draw
 	//Tails Max Dash
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 156
+	switch saved.region
+	case 0
+		text.drawline = 156
+		break
+	case 1
+		text.drawline = 176
+		break
+	end switch
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
@@ -2863,7 +3172,7 @@ function visuals.draw
 	//trip
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 178
+	text.drawline = 183
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
@@ -2884,7 +3193,7 @@ function visuals.draw
 	//fang
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 179
+	text.drawline = 184
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
@@ -2905,7 +3214,7 @@ function visuals.draw
 	//rabbit
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 180
+	text.drawline = 185
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
@@ -2926,7 +3235,7 @@ function visuals.draw
 	//fang
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
-	text.drawline = 181
+	text.drawline = 186
 	CallFunction(option.text)
 	
 	text.xpos = screen.xsize
@@ -2934,13 +3243,13 @@ function visuals.draw
 	text.drawalign = TEXT_CENTER_ALIGN
 
 	temp0 = saved.FangName
-	temp0 += 182
+	temp0 += 187
 	text.drawline = temp0
 	
 	CallFunction(option.text)
 	text.ypos += 21
 	menu.line++
-	
+
 	CallFunction(header.back)
 	text.drawline = 52
 	text.headercolor = HEADER_TEXT_GREY
@@ -3159,36 +3468,8 @@ event ObjectDraw
 	//Delete Highlight
 	if delete.check == 1
 		if inputDown.buttonA == 1
-			temp3 = 0
-				if delete.ticker != 110
-					if delete.ticker <= 110
-							delete.ticker++
-					end if
-				end if	
-			temp3 += delete.ticker
-			DrawRect(temp1, temp2, temp3, 17, 255,0,0, 255) // RED
-			if temp3 == 110
-				StopSfx(SfxName[Warn], 0)
-				delete.check = 2
-				PlaySfx(SfxName[Cleared], 0)
-
-				temp3 = 0
-				delete.ticker = 0
-			end if
-		else
-			StopSfx(SfxName[Warn], 0)
-			temp3 = 0
-			delete.ticker = 0
-			delete.check = 0
+			DrawRect(temp1, temp2, delete.ticker, 17, color7, 0, 0, 255) // RED
 		end if
-	end if
-	temp4 = inputPress.up
-	temp4 |= inputPress.down
-	if temp4 == 1
-		StopSfx(SfxName[Warn], 0)
-		temp3 = 0
-		delete.ticker = 0
-		delete.check = 0
 	end if
 	//Delete Highlight Ended
 
@@ -3260,7 +3541,7 @@ event ObjectDraw
 		DrawSpriteScreenXY(306, temp3, 50)
 		DrawSpriteScreenXY(307, temp3, 190)
 	end if
-	
+
 	if object.nameMenu == 1
 		DrawRect(0, 0, screen.xsize, screen.ysize, 0, 0, 0, 200)
 		DrawSpriteScreenXY(308, screen.xcenter, screen.ycenter)	
@@ -3410,6 +3691,8 @@ event ObjectStartup
 	saved.vsync = checkResult
 	CallNativeFunction(GetWindowScaleMode)
 	saved.scalemode = checkResult
+	CallNativeFunction(GetFrameRate)
+	saved.fps = checkResult
 	
 	LoadSpriteSheet("Menus/Options.gif")
 
@@ -3564,39 +3847,39 @@ event ObjectStartup
 
 	SpriteFrame(-48, 0, 14, 14, 113, 125) //306 Up Arrow
 	SpriteFrame(-48, 0, 14, 14, 113, 140) //307 Down Arrow
-	
+
 	SpriteFrame(-96, -72, 192, 144, 821, 244) //308 Name Box
 
 	temp0 = 0
 	temp1 = 8
 	while temp0 < 15
-		SpriteFrame(0, 0, 7, 6, temp1, 33) 309-323 
+		SpriteFrame(0, 0, 7, 6, temp1, 33) 309-323
 		temp1 += 8
 		temp0++
 	loop
 
 	temp0 = 0
-	temp1 = 0	
+	temp1 = 0
 	while temp0 < 11
-		SpriteFrame(0, 0, 7, 6, temp1, 57) 309-334 
+		SpriteFrame(0, 0, 7, 6, temp1, 57) 309-334
 		temp1 += 8
 		temp0++
 	loop
 
 	SpriteFrame(0, 0, 7, 6, 120, 42) //335
 	SpriteFrame(0, 0, 7, 6, 113, 17) //337
-	SpriteFrame(0, 0, 7, 6, 104, 16 )//338 	
+	SpriteFrame(0, 0, 7, 6, 104, 16 )//338
 	SpriteFrame(0, 0, 7, 6, 88, 9) //336
 	SpriteFrame(0, 0, 28, 6, 821, 389) //339
 
 	temp0 = 0
-	temp1 = 0	
+	temp1 = 0
 	while temp0 < 10
 		SpriteFrame(0, 0, 7, 6, temp1, 25) 340-349
 		temp1 += 8
 		temp0++
-	loop	
-	
+	loop
+
 	SpriteFrame(0, 0, 94, 6, 821, 396) //350
 	SpriteFrame(-8, 0, 7, 5, 80, 9) //351
 end event
