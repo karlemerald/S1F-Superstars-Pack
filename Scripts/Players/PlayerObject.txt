@@ -13,6 +13,7 @@ public alias  arrayPos6 : currentPlayer
 public alias  arrayPos7 : playerCount
 private alias object[8].value14 : TimeOverFlag
 private alias 20 : amy.spin.speed
+private alias -100 : FangGunTimer
 
 public alias saveRAM[257] : saved.spindash
 public alias saveRAM[258] : saved.speedCap
@@ -2888,7 +2889,22 @@ function PlayerObject_HandleGround
 				object.animationSpeed = 0
 			end if
 		end if
-		if object.jumpPress == 1
+		if object.controlMode >= 0
+			switch stage.playerListPos
+			default
+				temp0 = object.jumpPress
+				break
+			case 14
+				temp0 = inputPress.buttonA
+				temp0 |= inputPress.buttonC
+				break
+			case 15
+				temp0 = inputPress.buttonA
+				temp0 |= inputPress.buttonB
+				break
+			end switch	
+		end if
+		if temp0 == 1
 			CheckEqual(object.propertyValue, 5)
 			temp0 = checkResult
 			CheckEqual(saved.AmyMoveset, 1)
@@ -5757,6 +5773,85 @@ function PlayerObject_FangTrips
 		end if		
 		break		
 	end switch	
+end function
+
+
+function PlayerObject_StartFangBounce
+	if player.doubleJumpState == 1
+		if inputPress.buttonY == 1
+			CheckEqual(specialStage.emeralds, 127)
+			temp0 = checkResult
+			CheckGreater(player.rings, 49)
+			temp0 &= checkResult
+			CheckNotEqual(PlayerObject_SuperState, 1)
+			temp0 &= checkResult
+			CheckNotEqual(object[30].type, TypeName[Act Finish])
+			temp0 &= checkResult
+			CheckEqual(saved.superStates, 1)
+			temp0 &= checkResult
+			CheckEqual (player.invulnerable, 0)
+			temp0 &= checkResult
+			
+			if temp0 == 1
+				currentPlayer = object.entityPos
+				CallFunction(PlayerObject_SuperTransform)
+			end if
+		end if
+		if inputPress.buttonC == 1
+			if FangCoolDown == 0
+				object.value1 = FangGunTimer
+				CreateTempObject(TypeName[Cork], 0, object.xpos, object.ypos)
+				FangCoolDown = 50
+				object.animation = 33
+				if object.direction == FLIP_NONE
+					object[tempObjectPos].xvel = 0xA0000
+					object[tempObjectPos].yvel = 0
+					object[tempObjectPos].ypos -= 0x70000
+					object[tempObjectPos].xpos += 0x160000
+					object[tempObjectPos].frame = 0
+				else
+					object[tempObjectPos].xvel = -0xA0000
+					object[tempObjectPos].yvel = 0
+					object[tempObjectPos].ypos -= 0x70000
+					object[tempObjectPos].xpos -= 0x160000							
+					object[tempObjectPos].frame = 0						
+				end if
+				
+				CreateTempObject(TypeName[Dust Puff], 1, object.xpos, object.ypos)
+				object[tempObjectPos].drawOrder = 4
+				if object.direction == FLIP_NONE
+					object[tempObjectPos].ypos -= 0x20000
+					object[tempObjectPos].xpos += 0x170000
+					object[tempObjectPos].frame = 0
+				else
+					object[tempObjectPos].ypos -= 0x20000
+					object[tempObjectPos].xpos -= 0x190000							
+					object[tempObjectPos].frame = 0						
+				end if
+			end if
+		end if			
+
+		temp0 = inputPress.buttonA
+		temp0 |= inputPress.buttonB
+		if temp0 == 1
+			object.yvel += 0x65000 //penis
+			PlaySfx(SfxName[Release], 0)
+			CallFunction(PlayerObject_HandleFangBounce)
+			if object.value1 >= 0
+				object.prevAnimation = ANI_GLIDING_DROP
+				object.animation = ANI_GLIDING_DROP
+			else
+				object.prevAnimation = ANI_LEDGEPULLUP
+				object.animation = ANI_LEDGEPULLUP
+			end if	
+			object.frame = 0
+			object.state = PlayerObject_HandleFangBounce
+			object.animationTimer = 0
+			object.animationSpeed = 0
+			player.doubleJumpState++
+		end if
+	end if
+	
 end function
 
 
