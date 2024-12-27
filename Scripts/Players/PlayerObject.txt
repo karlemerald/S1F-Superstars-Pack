@@ -13,7 +13,6 @@ public alias  arrayPos6 : currentPlayer
 public alias  arrayPos7 : playerCount
 private alias object[8].value14 : TimeOverFlag
 private alias 20 : amy.spin.speed
-private alias -100 : FangGunTimer
 
 public alias saveRAM[257] : saved.spindash
 public alias saveRAM[258] : saved.speedCap
@@ -201,10 +200,10 @@ reserve function PlayerObject_FangTrips
 reserve function PlayerObject_StartFangShoot
 reserve function PlayerObject_StartRabbitGrab
 reserve function PlayerObject_StartFangBounce
-reserve function PlayerObject_HandleFangBounce
-
 reserve function PlayerObject_StartTripMove
 reserve function PlayerObject_HandleTripClimb
+reserve function PlayerObject_HandleCorkShoot
+reserve function PlayerObject_HandleFangBounce
 
 // doublejumpstate for Amy
 //0 = Not jumped
@@ -1060,12 +1059,14 @@ function PlayerObject_BadnikBreak
 		temp0 |= checkResult
 		CheckEqual(object[currentPlayer].animation, ANI_HAMMER_SPEEN)
 		temp0 |= checkResult
+
 	if stage.playerListPos == 15
 		if object[currentPlayer].ypos < object.ypos
-			CheckEqual(object[currentPlayer].animation, ANI_GLIDING_DROP)
+			CheckEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
 			temp0 |= checkResult
 		end if
 	end if
+
 	if temp1 == 1
 		CheckGreater(object[currentPlayer].ypos, object.ypos)
 		temp0 |= checkResult
@@ -1087,7 +1088,7 @@ function PlayerObject_BadnikBreak
 		object[tempObjectPos].drawOrder = 4
 		PlaySfx(SfxName[Destroy], 0)
 		if stage.playerListPos == 15
-			CheckNotEqual(object[currentPlayer].animation, ANI_GLIDING_DROP)
+			CheckNotEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
 			temp2 = checkResult
 		else
 			temp2 = 1
@@ -1574,6 +1575,15 @@ function PlayerObject_ProcessPlayer
 	if object.state != PlayerObject_HandleTripClimb	
 		StopSfx(SfxName[TripClimb])
 	end if		
+	if FangCoolDown > 0
+		FangCoolDown--
+	end if
+	if fangGunTimer > 0
+		fangGunTimer--
+		fangGunEnabled = 1
+	else
+		fangGunEnabled = 0		
+	end if	
 end function
 
 
@@ -3141,6 +3151,39 @@ function PlayerObject_HandleAir
 						end if
 					end if					
 				end if
+			end if
+
+			if stage.playerListPos == 15
+				switch object.animation 
+				case 53
+				case 56
+					temp0 = inputPress.buttonA
+					temp0 |= inputPress.buttonB
+					if temp0 == 1
+						object.yvel += 0x65000 //penis
+						PlaySfx(SfxName[Release], 0)
+						CallFunction(PlayerObject_HandleFangBounce)
+						if fangGunEnabled == 0
+							object.prevAnimation = ANI_FANG_BOUNCE
+							object.animation = ANI_FANG_BOUNCE
+						else
+							object.prevAnimation = ANI_BOUNCE_SHOOT
+							object.animation = ANI_BOUNCE_SHOOT
+						end if	
+						object.frame = 0
+						object.state = PlayerObject_HandleFangBounce
+						object.animationTimer = 0
+						object.animationSpeed = 0
+					end if
+					break
+				case 57
+					if object.yvel >= 0
+						object.frame = 1
+					else	
+						object.frame = 0
+					end if
+					break
+				end switch
 			end if
 
 			if object.animation == ANI_JUMPING
@@ -5190,7 +5233,15 @@ function PlayerObject_MoveAnimate
 	abs(temp0)
 	
 	if temp0 < 0x5F5C2
-		object.animation = ANI_WALKING
+		if stage.playerListPos == 15
+			if fangGunEnabled == 1
+				object.animation = ANI_GUN_WALKING
+			else	
+				object.animation = ANI_WALKING
+			end if	
+		else	
+			object.animation = ANI_WALKING
+		end if	
 		CallFunction(PlayerObject_HandleWalkAnimSpd)
 	else
 		switch object.propertyValue
@@ -5799,35 +5850,8 @@ function PlayerObject_StartFangBounce
 		end if
 		if inputPress.buttonC == 1
 			if FangCoolDown == 0
-				object.value1 = FangGunTimer
-				CreateTempObject(TypeName[Cork], 0, object.xpos, object.ypos)
-				FangCoolDown = 50
-				object.animation = 33
-				if object.direction == FLIP_NONE
-					object[tempObjectPos].xvel = 0xA0000
-					object[tempObjectPos].yvel = 0
-					object[tempObjectPos].ypos -= 0x70000
-					object[tempObjectPos].xpos += 0x160000
-					object[tempObjectPos].frame = 0
-				else
-					object[tempObjectPos].xvel = -0xA0000
-					object[tempObjectPos].yvel = 0
-					object[tempObjectPos].ypos -= 0x70000
-					object[tempObjectPos].xpos -= 0x160000							
-					object[tempObjectPos].frame = 0						
-				end if
-				
-				CreateTempObject(TypeName[Dust Puff], 1, object.xpos, object.ypos)
-				object[tempObjectPos].drawOrder = 4
-				if object.direction == FLIP_NONE
-					object[tempObjectPos].ypos -= 0x20000
-					object[tempObjectPos].xpos += 0x170000
-					object[tempObjectPos].frame = 0
-				else
-					object[tempObjectPos].ypos -= 0x20000
-					object[tempObjectPos].xpos -= 0x190000							
-					object[tempObjectPos].frame = 0						
-				end if
+				object.animation = ANI_AIR_SHOOT		
+				CallFunction(PlayerObject_HandleCorkShoot)	
 			end if
 		end if			
 
@@ -5838,8 +5862,8 @@ function PlayerObject_StartFangBounce
 			PlaySfx(SfxName[Release], 0)
 			CallFunction(PlayerObject_HandleFangBounce)
 			if object.value1 >= 0
-				object.prevAnimation = ANI_GLIDING_DROP
-				object.animation = ANI_GLIDING_DROP
+				object.prevAnimation = ANI_FANG_BOUNCE
+				object.animation = ANI_FANG_BOUNCE
 			else
 				object.prevAnimation = ANI_LEDGEPULLUP
 				object.animation = ANI_LEDGEPULLUP
@@ -5848,10 +5872,66 @@ function PlayerObject_StartFangBounce
 			object.state = PlayerObject_HandleFangBounce
 			object.animationTimer = 0
 			object.animationSpeed = 0
-			player.doubleJumpState++
 		end if
 	end if
+end function
+
+
+function PlayerObject_HandleCorkShoot
+	fangGunTimer = 100
+	CreateTempObject(TypeName[Cork], 0, object.xpos, object.ypos)
+	FangCoolDown = 50
+	object[tempObjectPos].frame = 0		
+	if object.direction == FLIP_NONE
+		object[tempObjectPos].xvel = 0xA0000
+		object[tempObjectPos].yvel = 0
+	else
+		object[tempObjectPos].xvel = -0xA0000
+		object[tempObjectPos].yvel = 0											
+	end if
 	
+	CreateTempObject(TypeName[Dust Puff], 1, object.xpos, object.ypos)
+	object[tempObjectPos].drawOrder = 4
+	object[tempObjectPos].frame = 0
+end function
+
+
+function PlayerObject_HandleFangBounce
+	CallFunction(PlayerObject_HandleAirAcceleration)
+	if object.gravity == GRAVITY_AIR
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		player.doubleJumpState = 1
+		object.gravity = GRAVITY_AIR
+		if player.jumpVelocity == 0x38000
+			temp1 = 0x40000
+		else
+			temp1 = 0x78000
+		end if
+		temp1 += player.gravityValue
+		Sin256(object.xvel, object.angle)
+		object.xvel *= temp1
+		Cos256(temp0, object.angle)
+		temp0 *= object.speed
+		object.xvel += temp0
+		object.xvel >>= 8
+		Sin256(object.yvel, object.angle)
+		object.yvel *= object.speed
+		Cos256(temp0, object.angle)
+		temp0 *= temp1
+		object.yvel -= temp0
+		object.yvel >>= 8
+		object.speed = object.xvel
+		object.scrollTracking = 1
+		object.animation = ANI_FANG_BOUNCE
+		object.frame = 1
+		object.angle = 0
+		object.collisionMode = CMODE_FLOOR
+		object.value1 = 1
+		CallFunction(PlayerObject_HandleRollAnimSpd)
+		object.state = PlayerObject_HandleAir
+		PlaySfx(SfxName[Bubble Bounce], 0)
+	end if
 end function
 
 
