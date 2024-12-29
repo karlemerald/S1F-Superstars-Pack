@@ -73,43 +73,41 @@ function Monitor_DebugSpawn
 end function
 
 function Monitor_SolidBox
-	if object[0].state != PlayerObject_RabbitGrab
-		if object[0].state != PlayerObject_HandleTripClimb
-			temp0 = object[currentPlayer].xpos
-			temp1 = object[currentPlayer].ypos
+	if object[0].state != PlayerObject_HandleTripClimb
+		temp0 = object[currentPlayer].xpos
+		temp1 = object[currentPlayer].ypos
+		BoxCollisionTest(C_BOX, object.entityPos, -15, -14, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
+		temp2 = object[currentPlayer].xpos
+		object[currentPlayer].xpos = temp0
+		object[currentPlayer].ypos = temp1
+		switch checkResult
+		case 4
+			if object[currentPlayer].gravity == GRAVITY_AIR
+				object.state = 1
+				object.yvel = -0x20000
+				object[currentPlayer].yvel = 0x20000
+			end if
+		case 2
+			temp2 += 0x10000
+			object[currentPlayer].xpos = temp2		
+			BoxCollisionTest(C_BOX, object.entityPos, -15, -10, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
+			if checkResult == 0
+				object[currentPlayer].xpos = temp0
+			end if
+			break
+		case 3
+			temp2 -= 0x10000
+			object[currentPlayer].xpos = temp2		
+			BoxCollisionTest(C_BOX, object.entityPos, -15, -10, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
+			if checkResult == 0
+				object[currentPlayer].xpos = temp0
+			end if
+			break
+		case 1
 			BoxCollisionTest(C_BOX, object.entityPos, -15, -14, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
-			temp2 = object[currentPlayer].xpos
-			object[currentPlayer].xpos = temp0
-			object[currentPlayer].ypos = temp1
-			switch checkResult
-			case 4
-				if object[currentPlayer].gravity == GRAVITY_AIR
-					object.state = 1
-					object.yvel = -0x20000
-					object[currentPlayer].yvel = 0x20000
-				end if
-			case 2
-				temp2 += 0x10000
-				object[currentPlayer].xpos = temp2		
-				BoxCollisionTest(C_BOX, object.entityPos, -15, -10, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
-				if checkResult == 0
-					object[currentPlayer].xpos = temp0
-				end if
-				break
-			case 3
-				temp2 -= 0x10000
-				object[currentPlayer].xpos = temp2		
-				BoxCollisionTest(C_BOX, object.entityPos, -15, -10, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
-				if checkResult == 0
-					object[currentPlayer].xpos = temp0
-				end if
-				break
-			case 1
-				BoxCollisionTest(C_BOX, object.entityPos, -15, -14, 15, 16, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
-				break
-			end switch
-		end if
-	end if	
+			break
+		end switch
+	end if
 end function
 
 event ObjectMain
@@ -294,56 +292,6 @@ event ObjectMain
 		end if	
 	next
 
-	foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
-		
-		switch object[arrayPos0].propertyValue
-		case 0
-			object.value30 = 6
-			object.value30 += object[arrayPos0].value0 
-			if object[arrayPos0].direction == FLIP_X
-				FlipSign(object.value30)
-				BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, object.value30, -10, 6, 0)
-			else
-				BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, -6, -10, object.value30, 0)		
-			end if	
-			break
-		case 1
-			object.value30 = 10
-			object.value30 += object[arrayPos0].value0 
-			FlipSign(object.value30)
-			BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, -6, object.value30, 6, 6)		
-			break
-		case 3
-			BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, -10, -15, 8, 5)		
-			break
-		case 2
-			break
-		end switch	
-		
-		if checkResult == 1
-		
-			if object[arrayPos0].propertyValue == 3
-				currentPlayer = object[0].entityPos
-				arrayPos1 = currentPlayer
-				arrayPos1 += playerCount
-				arrayPos1 += playerCount
-				object[arrayPos1].value3 = object.xpos
-				object[arrayPos1].value4 = object.ypos
-				object[arrayPos1].state = 2		
-				object[arrayPos0].type = TypeName[Blank Object]		
-			else
-				object[arrayPos0].value3 = object.xpos
-				object[arrayPos0].value4 = object.ypos
-
-				object[arrayPos0].state = 2			
-			end if
-			RabbitObjectCheck = 1		
-			object[arrayPos0].value5 = object.entityPos	
-		
-			object.yvel = 0
-			object.value20 = 1
-		end if
-	next	
 	if stage.playerListPos == 14
 		foreach (TypeName[Monitor], arrayPos0, ALL_ENTITIES)
 			if object[arrayPos0].propertyValue == 13

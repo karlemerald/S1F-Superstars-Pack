@@ -24,6 +24,7 @@
     <variable name="ANI_GUN_RUNNING" value="55" />
     <variable name="ANI_BOUNCE_SHOOT" value="56" />
     <variable name="ANI_AIR_SHOOT" value="57" />
+    <variable name="ANI_GUN_IDLE" value="58" />
     <variable name="fangGunEnabled" value="0" />
     <variable name="fangGunTimer" value="0" />
   </variables>

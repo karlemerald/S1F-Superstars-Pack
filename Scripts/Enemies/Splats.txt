@@ -96,49 +96,7 @@ event ObjectMain
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	next
-			foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
-				switch object[arrayPos0].propertyValue
-				case 0
-					object.value30 = 6
-					object.value30 += object[arrayPos0].value0 
-					if object[arrayPos0].direction == FLIP_X
-						FlipSign(object.value30)
-						BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, object.value30, -10, 6, 0)
-					else
-						BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, -6, -10, object.value30, 0)		
-					end if	
-					break
-				case 1
-					object.value30 = 12
-					object.value30 += object[arrayPos0].value0 
-					FlipSign(object.value30)
-					BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, -6, object.value30, 6, 6)		
-					break
-				case 3
-					BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, -10, -15, 8, 5)		
-					break
-				case 2
-					break			
-				end switch
-				if checkResult == 1
-					if object[arrayPos0].propertyValue == 3
-						currentPlayer = object[0].entityPos
-						arrayPos1 = currentPlayer
-						arrayPos1 += playerCount
-						arrayPos1 += playerCount
-						object[arrayPos1].EnemyX = object.xpos
-						object[arrayPos1].EnemyY = object.ypos
-						object[arrayPos1].state = 2		
-						object[arrayPos0].type = TypeName[Blank Object]		
-					else
-						object[arrayPos0].EnemyX = object.xpos
-						object[arrayPos0].EnemyY = object.ypos
-						object[arrayPos0].state = 2			
-					end if
-					object.xvel = 0
-					object.yvel = 0
-				end if
-			next						
+	
 end event
 
 

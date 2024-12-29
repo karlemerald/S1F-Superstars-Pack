@@ -76,6 +76,7 @@ event ObjectMain
 	
 	if object.value0 == 0
 		PlaySfx(SfxName[Explosion], 0)	
+		CallFunction(PlayerObject_CorkPos)
 		object.value0++
 	end if		
 

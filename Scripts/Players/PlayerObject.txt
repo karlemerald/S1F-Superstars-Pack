@@ -192,7 +192,7 @@ reserve function PlayerObject_HandleSuperPalFang
 reserve function PlayerObject_HandleSuperPalTrip
 reserve function PlayerObject_HandleSuperPalRabbit
 
-reserve function PlayerObject_RabbitGrab
+reserve function PlayerObject_StartRabbitGrab
 reserve function PlayerObject_HandleBored2
 reserve function PlayerObject_HandleRabbitGrab
 
@@ -204,6 +204,7 @@ reserve function PlayerObject_StartTripMove
 reserve function PlayerObject_HandleTripClimb
 reserve function PlayerObject_HandleCorkShoot
 reserve function PlayerObject_HandleFangBounce
+reserve function PlayerObject_CorkPos
 
 // doublejumpstate for Amy
 //0 = Not jumped
@@ -2799,8 +2800,28 @@ function PlayerObject_HandleGround
 		CallFunction(PlayerObject_ResetOnFloor)
 		if object.speed == 0
 			if object.collisionMode == CMODE_FLOOR
+
+				if stage.playerListPos == 14
+					CallFunction(PlayerObject_StartRabbitGrab)
+				end if
+				if stage.playerListPos == 15
+					if object.controlMode >= 0
+						if inputDown.buttonC == 1
+							if FangCoolDown == 0
+								object.value1 = 0
+								CallFunction(PlayerObject_HandleCorkShoot)
+							end if
+						end if
+					end if
+				end if
+
 				if object.value1 < 240
-					object.animation = ANI_STOPPED
+					if fangGunEnabled == 1
+						object.animation = ANI_GUN_IDLE
+						object.value1 = 0
+					else	
+						object.animation = ANI_STOPPED
+					end if	
 					object.value1++
 				else
 					object.animation = ANI_WAITING
@@ -2811,6 +2832,13 @@ function PlayerObject_HandleGround
 							object.animation = ANI_STOPPED
 						end if
 					end if
+					if stage.playerListPos == 15
+						object.value1++
+						if object.value1 == 0x4B0
+							object.value1 = 0
+							object.state = PlayerObject_HandleBored2
+						end if
+					end if						
 					if stage.playerListPos == 5
 						if options.gameMode != 3
 							object.value1++
@@ -2872,7 +2900,33 @@ function PlayerObject_HandleGround
 				end switch
 			end if
 		else
-			object.value1 = 0
+			if stage.playerListPos == 15
+				if object.controlMode >= 0
+					if inputDown.buttonC == 1
+						if FangCoolDown == 0
+							switch object.animation
+							case 5
+							case 54
+							case 6	
+							case 55	
+								if saved.rotate == 0
+									if player.groundrotation == 0
+										CallFunction(PlayerObject_HandleCorkShoot)
+									end if	
+								else
+									if player.groundrotation == 0
+										CallFunction(PlayerObject_HandleCorkShoot)
+									end if	
+								end if	
+								break
+							end switch	
+						end if
+					end if
+				end if
+			end if
+			if stage.playerListPos == 14
+				CallFunction(PlayerObject_StartRabbitGrab)
+			end if			
 			CallFunction(PlayerObject_MoveAnimate)
 		end if
 		if player.skidding > 0
@@ -3005,6 +3059,47 @@ function PlayerObject_HandleGround
 				end if
 			end if
 		end if	
+	end if
+end function
+
+
+function PlayerObject_HandleBored2
+	if object.gravity == GRAVITY_AIR
+		object.state = PlayerObject_HandleAir
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		CallFunction(PlayerObject_ResetOnFloor)
+		if object.animation == ANI_STOPPED
+			object.state = PlayerObject_HandleGround
+		else
+			object.value1++
+			if object.value1 < 1000
+				object.animation = ANI_BORED
+			else
+				object.animation = ANI_FLAILING2
+			end if
+			
+			if object.value1 == 1500
+				object.value1 = 0
+			end if
+			
+		end if
+		if object.jumpPress == 1
+			CallFunction(PlayerObject_StartJump)
+		else
+			if object.up == 1
+				object.animation = ANI_STOPPED
+			end if
+			if object.down == 1
+				object.animation = ANI_STOPPED
+			end if
+			if object.left == 1
+				object.animation = ANI_STOPPED
+			end if
+			if object.right == 1
+				object.animation = ANI_STOPPED
+			end if
+		end if
 	end if
 end function
 
@@ -3175,6 +3270,15 @@ function PlayerObject_HandleAir
 						object.animationTimer = 0
 						object.animationSpeed = 0
 					end if
+					if object.controlMode >= 0
+						if inputDown.buttonC == 1
+							if FangCoolDown == 0
+								object.prevAnimation = ANI_BOUNCE_SHOOT
+								object.animation = ANI_BOUNCE_SHOOT			
+								CallFunction(PlayerObject_HandleCorkShoot)
+							end if
+						end if
+					end if						
 					break
 				case 57
 					if object.yvel >= 0
@@ -5367,19 +5471,23 @@ function PlayerObject_MoveAnimate
 			case 15 //Fang
 				if temp0 > 0x9FFFF
 					if saved.FangMaxDash == 1
-						object.animation = ANI_PEELOUT
+						if fangGunEnabled == 0
+							object.animation = ANI_PEELOUT
+						else
+							object.animation = ANI_GUN_RUNNING
+						end if
 					else
-						if object.value1 >= 0
+						if fangGunEnabled == 0
 							object.animation = ANI_RUNNING
 						else
-							object.animation = ANI_FLYINGTIRED
+							object.animation = ANI_GUN_RUNNING
 						end if
 					end if
 				else
-					if object.value1 >= 0
+					if fangGunEnabled == 0
 						object.animation = ANI_RUNNING
 					else
-						object.animation = ANI_FLYINGTIRED
+						object.animation = ANI_GUN_RUNNING
 					end if
 				end if
 				break
@@ -5848,7 +5956,7 @@ function PlayerObject_StartFangBounce
 				CallFunction(PlayerObject_SuperTransform)
 			end if
 		end if
-		if inputPress.buttonC == 1
+		if inputDown.buttonC == 1
 			if FangCoolDown == 0
 				object.animation = ANI_AIR_SHOOT		
 				CallFunction(PlayerObject_HandleCorkShoot)	
@@ -5861,12 +5969,12 @@ function PlayerObject_StartFangBounce
 			object.yvel += 0x65000 //penis
 			PlaySfx(SfxName[Release], 0)
 			CallFunction(PlayerObject_HandleFangBounce)
-			if object.value1 >= 0
+			if fangGunEnabled == 0
 				object.prevAnimation = ANI_FANG_BOUNCE
 				object.animation = ANI_FANG_BOUNCE
 			else
-				object.prevAnimation = ANI_LEDGEPULLUP
-				object.animation = ANI_LEDGEPULLUP
+				object.prevAnimation = ANI_BOUNCE_SHOOT
+				object.animation = ANI_BOUNCE_SHOOT
 			end if	
 			object.frame = 0
 			object.state = PlayerObject_HandleFangBounce
@@ -5880,7 +5988,7 @@ end function
 function PlayerObject_HandleCorkShoot
 	fangGunTimer = 100
 	CreateTempObject(TypeName[Cork], 0, object.xpos, object.ypos)
-	FangCoolDown = 50
+	FangCoolDown = 20
 	object[tempObjectPos].frame = 0		
 	if object.direction == FLIP_NONE
 		object[tempObjectPos].xvel = 0xA0000
@@ -5923,7 +6031,6 @@ function PlayerObject_HandleFangBounce
 		object.yvel >>= 8
 		object.speed = object.xvel
 		object.scrollTracking = 1
-		object.animation = ANI_FANG_BOUNCE
 		object.frame = 1
 		object.angle = 0
 		object.collisionMode = CMODE_FLOOR
@@ -5932,7 +6039,237 @@ function PlayerObject_HandleFangBounce
 		object.state = PlayerObject_HandleAir
 		PlaySfx(SfxName[Bubble Bounce], 0)
 	end if
+	if object.controlMode >= 0
+		if inputDown.buttonC == 1
+			if FangCoolDown == 0
+				object.prevAnimation = ANI_BOUNCE_SHOOT
+				object.animation = ANI_BOUNCE_SHOOT			
+				CallFunction(PlayerObject_HandleCorkShoot)
+			end if
+		end if
+	end if	
 end function
+
+
+function PlayerObject_CorkPos
+	switch object[0].animation 
+	case 53
+	case 56
+		switch object[0].frame
+		case 0
+			object.ypos += 0x10000			
+			if object[0].direction == FLIP_NONE
+				object.xpos += 0x190000
+			else
+				object.xpos -= 0x190000												
+			end if			
+			break
+		default
+			object.ypos -= 0x130000			
+			if object[0].direction == FLIP_NONE
+				object.xpos += 0x190000
+			else
+				object.xpos -= 0x190000	
+			end if
+			break				
+		end switch	
+		break
+	case 10 	
+	case 57 	
+		if object[0].direction == FLIP_NONE
+			object.ypos -= 0x20000
+			object.xpos += 0x180000
+		else
+			object.ypos -= 0x20000
+			object.xpos -= 0x180000												
+		end if
+		break	
+	case 5
+	case 54
+		switch object[0].frame
+		case 0
+		case 2
+			temp0 = 0
+			temp1 = 0x200000
+			break
+		case 1
+			temp0 = 0
+			temp1 = 0x230000
+			break
+		case 3
+		case 5
+			temp0 = 0
+			temp1 = 0x200000
+			break
+		case 4
+			temp0 = 0x20000
+			temp1 = 0x230000
+			break				
+		end switch	
+		if object[0].direction == FLIP_X
+			FlipSign(temp1)
+		end if
+		object.ypos -= temp0
+		object.xpos += temp1
+		break	
+	case 6	
+	case 55	
+		if object[0].direction == FLIP_NONE
+			object.ypos -= 0x30000
+			object.xpos += 0x1D0000
+		else
+			object.ypos -= 0x30000
+			object.xpos -= 0x1D0000												
+		end if
+		break
+	case 0
+	case 58 
+		object.ypos -= 0x50000		
+		if object[0].direction == FLIP_NONE
+			object.xpos += 0x200000
+		else
+			object.xpos -= 0x200000												
+		end if
+		break
+	end switch	
+end function		
+
+
+function PlayerObject_StartRabbitGrab
+	if player.doubleJumpState == 1
+		if inputPress.buttonY == 1
+			CheckEqual(specialStage.emeralds, 127)
+			temp0 = checkResult
+			CheckGreater(player.rings, 49)
+			temp0 &= checkResult
+			CheckNotEqual(PlayerObject_SuperState, 1)
+			temp0 &= checkResult
+			CheckNotEqual(object[30].type, TypeName[Act Finish])
+			temp0 &= checkResult
+			CheckEqual(saved.superStates, 1)
+			temp0 &= checkResult
+			CheckEqual (player.invulnerable, 0)
+			temp0 &= checkResult
+			
+			if temp0 == 1
+				currentPlayer = object.entityPos
+				CallFunction(PlayerObject_SuperTransform)
+			end if
+		end if
+	end if	
+	if inputPress.buttonB == 1
+		if object.controlMode >= 0
+			currentPlayer = object.entityPos
+			arrayPos0 = currentPlayer
+			arrayPos0 += playerCount
+			arrayPos0 += playerCount
+			
+			if object.gravity == GRAVITY_GROUND
+				object.animation = 50
+				object.prevAnimation = 50
+			else
+				object.animation = 51
+				object.prevAnimation = 51				
+			end if
+			
+			object.state = PlayerObject_HandleRabbitGrab
+			
+			EarControl = 0
+
+			switch EarControl
+			case 0
+				ResetObjectEntity(arrayPos0, TypeName[Ears], 0, 0, 0)	
+				object[arrayPos0].priority = PRIORITY_ACTIVE
+				object[arrayPos0].direction = object.direction
+				arrayPos0++
+				ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
+				object[arrayPos0].priority = PRIORITY_ACTIVE
+				object[arrayPos0].direction = object.direction		
+				break			
+			end switch		
+		end if	
+	end if	
+end function
+
+
+function PlayerObject_HandleRabbitGrab
+	currentPlayer = object.entityPos
+	arrayPos0 = currentPlayer
+	arrayPos0 += playerCount
+	arrayPos0 += playerCount	
+	
+	// Go to the pull back state if B is not held
+	if inputDown.buttonB == 0
+		object[arrayPos0].state = 2	
+	end if
+
+	if object.gravity == GRAVITY_GROUND
+		switch object[arrayPos0].state
+		case 0
+		case 1
+			object.animation = 50
+
+			//Slow Down
+			temp0 = 0x2500
+			if object.direction == FLIP_X
+				if object.speed < 0
+					object.speed += temp0
+				else
+					object.speed = 0
+				end if
+			else
+				if object.speed > 0
+					object.speed -= temp0
+				else
+					object.speed = 0
+				end if
+			end if		
+			break
+		case 2
+			if object[arrayPos0].value0 < 40
+				object.state = PlayerObject_HandleAir
+				object.animation = ANI_STOPPED
+				object.value1 = 0
+				CallFunction(PlayerObject_HandleAirMovement)
+			end if
+			break	
+		end switch
+
+		// Skidding Clouds
+		temp0 = object.speed
+		abs(temp0)
+		if temp0 > 20
+			PlaySfx(SfxName[Skidding], 0)
+			if ringTimer == 0
+				CreateTempObject(TypeName[Dust Puff], 0, object.xpos, object.ypos)
+				object[tempObjectPos].iypos += object.collisionBottom
+				object[tempObjectPos].drawOrder = player.sortedDrawOrder
+			end if
+		else
+			// Just stop it just in case
+			StopSfx(SfxName[Skidding])		
+		end if	
+	else
+		switch object[arrayPos0].state
+		case 0
+		case 1
+			object.animation = 51
+
+			//Gravity & Apples		
+			object.yvel += player.gravityValue
+			break
+		case 2
+			if object[arrayPos0].value0 < 40
+				object.state = PlayerObject_HandleAir
+				player.doubleJumpState = 0
+				object.animation = ANI_JUMPING
+				object.yvel = 1
+				CallFunction(PlayerObject_HandleAirMovement)
+			end if
+			break	
+		end switch			
+	end if			
+end function	
 
 
 event ObjectMain
@@ -6264,20 +6601,23 @@ function PlayerObject_Force45
 		end if
 	end if
 	temp0 = object.rotation
-	if object.rotation >= 0x100
+	player.groundRotation = object.rotation
+	if player.groundRotation >= 0x100
 		temp1 = 532
-		temp1 -= object.rotation
+		temp1 -= player.groundRotation
 		temp1 >>= 6
-		object.rotation = 8
-		object.rotation -= temp1
+		player.groundRotation = 8
+		player.groundRotation -= temp1
 	else
-		object.rotation += 20
-		object.rotation >>= 6
+		player.groundRotation += 20
+		player.groundRotation >>= 6
 	end if
-	if object.rotation == 8
-		object.rotation = 0
+	if player.groundRotation == 8
+		player.groundRotation = 0
 	end if
-	object.rotation <<= 6
+	player.groundRotation <<= 6
+	abs(player.groundRotation)	
+	object.rotation = player.groundRotation
 	DrawObjectAnimation()
 	object.rotation = temp0
 end function
@@ -6491,7 +6831,7 @@ event ObjectStartup
 			CallFunction(PlayerObject_HandleSuperPalRabbit)
 			object[0].propertyValue = 14
 			object[0].value30 = -5
-			object[0].value32 = PlayerObject_RabbitGrab
+			object[0].value32 = PlayerObject_StartRabbitGrab
 			break
 		case 15
 			LoadAnimation("Fang.ani")

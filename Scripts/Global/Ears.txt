@@ -8,344 +8,74 @@
 //-------Aliases-------//
 
 private alias object.value0 : object.size
-private alias object.value1 : object.endEarThing
-private alias object.value2 : object.timer
-public alias object.value3 : object.EnemyX
-public alias object.value4 : object.EnemyY
-public alias object.value5 : object.alive
-public alias object.value6 : object.SpecialObjectCheck
+private alias object.value1 : object.tipFrame
+private alias object.value2 : object.tipX
+private alias object.value3 : object.timer 
+private alias object.value4 : object.timer 
 
-public value RabbitTip = 0;
+private alias object.value38 : object.hitboxTop
+private alias object.value39 : object.hitboxBottom
+private alias object.value40 : object.hitboxLeft
+private alias object.value41 : object.hitboxRight
 
-// Tables
+reserve function EarKillCheck
 
+function EarKillCheck
+	if object[arrayPos0].propertyValue == 4
+		object[arrayPos0].state = 3
+	end if
+end function
 
 event ObjectMain
 	switch object.propertyvalue
-	case 0
-		switch object.state
-		case 0 //Strech it out
-			if object.size <= 66
-				object.size += 9
-				object.endEarThing += 0x70000
-			else
-				object.size = 66
-				object.state++
-			end if	
-			EditFrame(0, -2, -11, object.size, 7, 118, 70)
-			object.frame = 0
-			break
-		case 1 //Waiting
-			if inputDown.buttonB == 1
-				object.timer++
-				if object.timer == 40
-					object.state = 3
-				end if
-			else
-				object.state = 3
-			end if
-			break
-		case 2 //Launch
-		
-			arrayPos0 = object.value5
-			object.value3 = object[arrayPos0].xpos
-			object.value4 = object[arrayPos0].ypos
+	case 0 // Ear Horizonal
 
-			if object.size > 30
-				object.size -= 11
-				object.endEarThing -= 0x90000
-			else
-				object.size = 30
-				object.type = TypeName[Blank Object]
-			end if	
-			EditFrame(0, -2, -11, object.size, 7, 118, 70)
-		
-			break
-		case 3 //Strech it back
-			if object.size > 30
-				object.size -= 11
-				object.endEarThing -= 0x90000
-			else
-				if object[0].animation == 51
-					object[0].state = PlayerObject_HandleAir
-					object[0].animation = ANI_JUMPING
-				else
-					object[0].state = PlayerObject_HandleGround				
-					object[0].animation = ANI_STOPPED
-				end if
-				object.size = 30
-				object.type = TypeName[Blank Object]
-			end if	
-			EditFrame(0, -2, -11, object.size, 7, 118, 70)
-			break		
-		end switch
-		object.xpos = object[0].xpos
-		object.ypos = object[0].ypos
-		if object[0].animation == 51
-			object.ypos -= 0x70000
-		end if		
-		break
-	case 1
+		EditFrame(0, -2, -11, object.size, 7, 118, 70)	// Edit the frame depending on object.size
+		object.tipFrame = 1 // Controls the tip
+
 		switch object.state
-		case 0 //Strech it out
-			if object.size <= 64
-				object.size += 7
-				object.endEarThing -= 0x70000
+		case 0 // Strech it out
+			if object.size < 66 // 66 is the limit
+				object.size += 11
+				object.tipX += 11
 			else
-				object.size = 64
+				object.size = 66			
+				object.tipX = 66			
 				object.state++
 			end if	
-			temp0 = 151
-			temp0 -= object.size
-			
-			temp1 = -6
-			temp1 -= object.size
-			EditFrame(2, -4, temp1, 9, object.size, 173, temp0)
-			object.frame = 2
 			break
-		case 1 //Waiting
-			if inputDown.buttonB == 1
-				object.timer++
-				if object.timer == 40
-					object.state = 3
-				end if
-			else
-				object.state = 3
+		case 1	
+			object.timer++
+			if object.timer == 20
+				object.state++
 			end if
 			break
-		case 2 //Launch
-			if object.size > 20
-				object.size -= 7
-				object.endEarThing += 0x70000
-			else
-				object.size = 20
+		case 2 // Pull it back
+			if object.size > 20 
+				object.size -= 15
+				object.tipX -= 8
+			else		
 				object.type = TypeName[Blank Object]
-			end if	
-			temp0 = 151
-			temp0 -= object.size
-			
-			temp1 = -6
-			temp1 -= object.size
-			EditFrame(2, -4, temp1, 9, object.size, 173, temp0)	
-			break
-		case 3 //Strech it back
-			if object.size > 20
-				object.size -= 7
-				object.endEarThing += 0x70000
-			else
-				if object[0].animation == 51
-					object[0].state = PlayerObject_HandleAir
-					object[0].animation = ANI_JUMPING
-				else
-					object[0].state = PlayerObject_HandleGround				
-					object[0].animation = ANI_STOPPED
-				end if
-				object.size = 20
-				object.type = TypeName[Blank Object]
-			end if	
-			temp0 = 151
-			temp0 -= object.size
-			
-			temp1 = -6
-			temp1 -= object.size
-			EditFrame(2, -4, temp1, 9, object.size, 173, temp0)			
-			break		
-		end switch
-		
-		object.xpos = object[0].xpos
-		object.ypos = object[0].ypos
-		if object[0].animation == 51
-			object.ypos -= 0x70000
-		end if				
-		break		
-	case 4
-		switch object.state
-		case 0
-			object.xpos = object[0].xpos
-			object.ypos = object[0].ypos
-			if object[0].animation == 51
-				object.ypos -= 0x70000
+				object[+1].type = TypeName[Blank Object]
 			end if				
-			currentPlayer = object[0].entityPos
-			arrayPos0 = currentPlayer
-			arrayPos0 += playerCount
-			arrayPos0 += playerCount
-			
-			switch object[arrayPos0].propertyvalue
-			case 0
-				if object[arrayPos0].direction == FLIP_X
-					object.xpos -= object[arrayPos0].endEarThing
-					object.xpos += 0xA0000				
-				else
-					object.xpos += object[arrayPos0].endEarThing
-					object.xpos -= 0xA0000
-				end if
-				break
-			case 1
-				object.ypos += object[arrayPos0].endEarThing
-				object.ypos += 0x80000					
-				break				
-			end switch	
-			
-			if object[arrayPos0].state != 2
-				ObjectTileCollision(CSIDE_RWALL, 25, 0, 0)
-				if checkResult == 1
-					object[arrayPos0].state = 3
-				end if	
-
-				ObjectTileCollision(CSIDE_ROOF, 0, 10, object[0].collisionPlane)
-				if checkResult == 1
-					object[arrayPos0].state = 3
-
-				end if	
-			
-				ObjectTileCollision(CSIDE_LWALL, -25, 0, 0)
-				if checkResult == 1
-					object[arrayPos0].state = 3
-				end if
-			end if
-			break
-		case 1
-			object.xpos += object.xvel
-			if object.xvel > 0
-				if object.xpos >= object.value9
-					object.xpos = object.value9
-					object.gravity = GRAVITY_AIR
-					object.state = 2
-				end if
-			else
-				if object.xpos <= object.value9
-					object.xpos = object.value9
-					object.gravity = GRAVITY_AIR
-					object.state = 2
-				end if
-			end if
-			break
-		case 2
-			temp1 = object.iypos
-			temp1 += 12
-			Get16x16TileInfo(temp0, object.ixpos, temp1, TILEINFO_ANGLEB)
-			if temp0 == 1
-				object.state = 3
-				if object.xvel > 0
-					object.xvel = 0x8000
-				else
-					object.xvel = -0x8000
-				end if
-			else
-				object.state = 0
-			end if
-			break			
+			break	
 		end switch	
+
+		object.hitboxTop = 0
+		object.hitboxBottom = 0
+		object.hitboxLeft = 0
+		object.hitboxRight = 0
 		break
 
-	case 2
-		temp0 = -58
-		temp1 = -2
-	
-		switch object.state
-		case 0 //Strech it out
-			if object.size < 45
-				object.size += 9
-				object.endEarThing += 0x80000
-			else
-				object.size = 45
-				object.state++
-			end if	
-			EditFrame(4, temp1, temp0, object.size, 53, 118, 78)
-			object.frame = 4
-			break
-		case 1 //Waiting
-			if inputDown.buttonB == 1
-				object.timer++
-				if object.timer == 40
-					object.state = 3
-				end if
-			else
-				object.state = 3
-			end if
-			break
-		case 2 //Launch
-			if object.size > 10
-				object.size -= 11
-				object.endEarThing -= 0x90000
-			else
-				object.size = 10
-				object.type = TypeName[Blank Object]
-			end if	
-			EditFrame(4, temp1, temp0, object.size, 53, 118, 78)
-			break
-		case 3 //Strech it back
-			if object.size > 30
-				object.size -= 11
-				object.endEarThing -= 0x90000
-			else
-				if object[0].animation == 51
-					object[0].state = PlayerObject_HandleAir
-					object[0].animation = ANI_JUMPING
-				else
-					object[0].state = PlayerObject_HandleGround				
-					object[0].animation = ANI_STOPPED
-				end if
-				object.size = 30
-				object.type = TypeName[Blank Object]
-			end if	
-			EditFrame(4, temp1, temp0, object.size, 53, 118, 78)
-			break		
-		end switch
-		object.xpos = object[0].xpos
-		object.ypos = object[0].ypos
-		if object[0].animation == 51
-			object.ypos -= 0x70000
-		end if	
-		break
-	case 3
-		currentPlayer = object[0].entityPos
-		arrayPos0 = currentPlayer
-		arrayPos0 += playerCount
-		arrayPos0 += playerCount	
-		
-		temp0 = object[arrayPos0].size	
-		temp0 <<= 16
-		Abs(temp0)
-
-			ObjectTileCollision(CSIDE_RWALL, 25, 0, 0)
-			if checkResult == 1
-				object[arrayPos0].state = 3
-
-			end if	
-
-			ObjectTileCollision(CSIDE_ROOF, 0, 10, object[0].collisionPlane)
-			if checkResult == 1
-				object[arrayPos0].state = 3
-
-			end if	
-		
-			ObjectTileCollision(CSIDE_LWALL, -25, 0, 0)
-			if checkResult == 1
-				object[arrayPos0].state = 3
-			end if			
-		
-		object.xpos = object[0].xpos
-		if object[0].direction == FLIP_X
-			FlipSign(temp0)
-		end if
-		object.xpos += temp0		
-		object.ypos = object[0].ypos
-		object.ypos -= object[arrayPos0].endEarThing
-		if object[0].animation == 51
-			object.ypos -= 0x70000
-		end if			
-		break
+	case 4 // The Tip of it All
+		object.hitboxTop = -4
+		object.hitboxBottom = 4
+		object.hitboxLeft = -8
+		object.hitboxRight = 12
+		break	
 	end switch	
-	
-	CheckNotEqual(object[0].animation, ANI_HAMMER_SPEEN)
-	temp0 = checkResult
-	CheckNotEqual(object[0].animation, ANI_BDASH1)
-	temp0 &= checkResult
-	CheckNotEqual(object[0].animation, ANI_BDASH0)
-	temp0 &= checkResult	
-	if temp0 == 1
+		
+	if object[0].state != PlayerObject_HandleRabbitGrab
 		object.type = TypeName[Blank Object]
 	end if
 end event
@@ -354,48 +84,31 @@ end event
 event ObjectDraw
 	if object[0].visible == 1
 		object.drawOrder = object[0].value18
+		object.ypos = object[0].ypos
+		if object[0].gravity == GRAVITY_AIR
+			object.ypos -= 0x70000
+		end if
+
 		switch object.propertyvalue
 		case 0
-			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
-			temp0 = object.endEarThing
-			if object.direction == FLIP_X 
-				FlipSign(temp0)
-			end if		
-			temp0 += object[0].xpos
-			RabbitTip = object.frame
-			RabbitTip++
-			DrawSpriteFX(RabbitTip, FX_FLIP, temp0, object.ypos)
+			DrawSpriteFX(0, FX_FLIP, object[0].xpos, object.ypos)
 			break
-		case 1
-			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
-			temp0 = object.endEarThing
-			temp0 += object[0].ypos
-			RabbitTip = object.frame
-			RabbitTip++
-			DrawSpriteFX(RabbitTip, FX_FLIP, object.xpos, temp0)
-			break
-		case 2
-			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
-			temp0 = object.endEarThing
-			if object.direction == FLIP_X 
-				FlipSign(temp0)
-			end if		
-			temp0 += object[0].xpos
-
-			temp1 = object.endEarThing
-			FlipSign(temp1)
-			temp1 += object[0].ypos
-			if object[0].animation == 51
-				temp1 -= 0x70000
-			end if	
-			
-			RabbitTip = object.frame
-			RabbitTip++
-			DrawSpriteFX(RabbitTip, FX_FLIP, temp0, temp1)
-			break	
 		case 4
-			//DrawSpriteXY(1, object.xpos, object.ypos)		
-			break
+			temp1 = object[-1].tipX	
+			temp1 <<= 16
+			Abs(temp1)
+			if object.direction == FLIP_X
+				FlipSign(temp1)
+			end if
+
+			object.xpos = object[0].xpos
+			object.xpos += temp1
+			object.ypos -= 0x70000
+
+			if object[-1].size > 0
+				DrawSpriteFX(object[-1].tipFrame, FX_FLIP, object.xpos, object.ypos)
+			end if	
+			break	
 		end switch	
 	end if	
 end event
@@ -408,15 +121,15 @@ event ObjectStartup
 	
 	//Horizonal 0-1
 	SpriteFrame(-2, -11, 66, 7, 118, 70) 
-	SpriteFrame(0, -11, 20, 7, 175, 70)
+	SpriteFrame(-16, -4, 28, 7, 170, 70)
 	
 	//Vertical 2-3
 	SpriteFrame(-4, -71, 9, 64, 173, 88)
-	SpriteFrame(-4, -10, 9, 10, 173, 78)
+	SpriteFrame(-4, 0, 9, 10, 173, 78)
 
 	//Diagonal 4-5
 	SpriteFrame(-4, -51, 54, 53, 118, 78)
-	SpriteFrame(-4, -11, 9, 11, 163, 78)	
+	SpriteFrame(-4, 0, 9, 11, 163, 78)	
 end event
 
 event RSDKDraw

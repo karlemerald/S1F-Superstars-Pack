@@ -699,18 +699,18 @@ event ObjectStartup
 		switch saved.FangName
 		case 0
 		case 1
-			SpriteFrame(-70, 0, 70, 16, 256, 123) //0 Fang
+			SpriteFrame(-70, 0, 70, 16, 371, 1) //0 Fang
 			break
 		case 2
-			SpriteFrame(-64, 0, 64, 16, 301, 239) //0 Trip
+			SpriteFrame(-64, 0, 64, 16, 416, 35) //0 Trip
 			break
 		case 3
-			SpriteFrame(-51, 0, 44, 16, 256, 239) //29 Amy
+			SpriteFrame(-51, 0, 44, 16, 371, 35) //29 Amy
 			break
 		end switch			
 		break
 	case 13
-		SpriteFrame(-70, 0, 70, 16, 256, 140) //0 Trip
+		SpriteFrame(-70, 0, 70, 16, 371, 18) //0 Trip
 		break		
 	end switch	
 	if saved.region == 0

@@ -74,51 +74,7 @@ event ObjectMain
 	if object.propertyValue == 1
 		object.xpos = object[0].xpos	
 		object.ypos = object[0].ypos
-		
-		
-		switch object[0].animation 
-		case 29
-		case 32
-			switch object.frame
-			case 0
-				if object[0].direction == FLIP_NONE
-					object.ypos -= 0x100000
-					object.xpos += 0x150000
-				else
-					object.ypos -= 0x100000
-					object.xpos -= 0x150000												
-				end if			
-				break
-			case 1
-				if object[0].direction == FLIP_NONE
-					object.ypos -= 0x100000
-					object.xpos += 0x150000
-				else
-					object.ypos -= 0x100000
-					object.xpos -= 0x150000	
-				end if
-				break				
-			end switch	
-			break
-		case 33 	
-			if object[0].direction == FLIP_NONE
-				object.ypos -= 0x20000
-				object.xpos += 0x150000
-			else
-				object.ypos -= 0x20000
-				object.xpos -= 0x150000												
-			end if
-			break	
-		default 	
-			if object[0].direction == FLIP_NONE
-				object.ypos -= 0x20000
-				object.xpos += 0x200000
-			else
-				object.ypos -= 0x20000
-				object.xpos -= 0x200000												
-			end if
-			break
-		end switch	
+		CallFunction(PlayerObject_CorkPos)
 	end if	
 end event
 

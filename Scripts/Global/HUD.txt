@@ -509,13 +509,13 @@ function LivesHud
 			switch saved.FangName
 			case 0
 			case 1
-				temp0 = 105
+				temp1 = 105
 				break
 			case 2
-				temp0 = 106
+				temp1 = 106
 				break
 			case 3
-				temp0 = 107
+				temp1 = 107
 				break				
 			end switch
 			break					
