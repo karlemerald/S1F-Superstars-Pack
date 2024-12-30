@@ -3609,6 +3609,9 @@ function PlayerObject_LookingUp
 							CallFunction(PlayerObject_StartSuperPeel)
 						end if
 						break	
+					case 14
+						CallFunction(PlayerObject_StartRabbitGrab)
+						break	
 				end switch
 			end if
 		end if
@@ -6174,19 +6177,28 @@ function PlayerObject_StartRabbitGrab
 			
 			object.state = PlayerObject_HandleRabbitGrab
 			
-			EarControl = 0
+			if inputDown.Up == 1
+				temp0 = inputDown.left
+				temp0 |= inputDown.right
+				if temp0 == 1
+					EarControl = 2				
+				else
+					EarControl = 1
+				end if	
+			else	
+				EarControl = 0
+			end if	
 
-			switch EarControl
-			case 0
-				ResetObjectEntity(arrayPos0, TypeName[Ears], 0, 0, 0)	
-				object[arrayPos0].priority = PRIORITY_ACTIVE
-				object[arrayPos0].direction = object.direction
-				arrayPos0++
-				ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
-				object[arrayPos0].priority = PRIORITY_ACTIVE
-				object[arrayPos0].direction = object.direction		
-				break			
-			end switch		
+			object.value1 = object.speed
+
+			ResetObjectEntity(arrayPos0, TypeName[Ears], EarControl, 0, 0)	
+			object[arrayPos0].priority = PRIORITY_ACTIVE
+			object[arrayPos0].direction = object.direction	
+
+			arrayPos0++
+			ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
+			object[arrayPos0].priority = PRIORITY_ACTIVE
+			object[arrayPos0].direction = object.direction					
 		end if	
 	end if	
 end function
@@ -6197,17 +6209,14 @@ function PlayerObject_HandleRabbitGrab
 	arrayPos0 = currentPlayer
 	arrayPos0 += playerCount
 	arrayPos0 += playerCount	
-	
-	// Go to the pull back state if B is not held
-	if inputDown.buttonB == 0
-		object[arrayPos0].state = 2	
-	end if
 
-	if object.gravity == GRAVITY_GROUND
-		switch object[arrayPos0].state
-		case 0
-		case 1
+	switch object[arrayPos0].state
+	case 0
+	case 1
+		if object.gravity == GRAVITY_GROUND
 			object.animation = 50
+
+
 
 			//Slow Down
 			temp0 = 0x2500
@@ -6224,17 +6233,116 @@ function PlayerObject_HandleRabbitGrab
 					object.speed = 0
 				end if
 			end if		
-			break
-		case 2
-			if object[arrayPos0].value0 < 40
-				object.state = PlayerObject_HandleAir
+		else
+			//Gravity & Apples		
+			object.yvel += player.gravityValue	
+		end if	
+		if inputDown.buttonB == 0
+			object[arrayPos0].state = 2	
+		end if			
+		break
+	case 2
+		//come back regular player controls
+		if object[arrayPos0].value0 < 40
+			object.state = PlayerObject_HandleAir
+			if object.gravity == GRAVITY_GROUND
 				object.animation = ANI_STOPPED
-				object.value1 = 0
-				CallFunction(PlayerObject_HandleAirMovement)
-			end if
-			break	
-		end switch
+			else	
+				object.animation = ANI_JUMPING
+			end if	
+			object.value1 = 0
+			CallFunction(PlayerObject_HandleAirMovement)
+		end if
+		break
+	case 3 //kill
 
+		object.gravity = GRAVITY_AIR
+
+		//Entity Pos
+		arrayPos1 = object[arrayPos0].value4
+
+		//Main Speed
+		temp1 = object[arrayPos1].xpos
+		temp1 -= object.xpos
+		temp1 /= 3
+		object.xvel = 0
+		object.speed = 0
+		object.xpos += temp1
+
+		// Check if they hit
+		temp1 = object[arrayPos1].ypos
+		temp1 -= object.ypos
+		temp1 /= 3
+		object.yvel = 0
+		object.ypos += temp1
+		
+		temp2 = object[arrayPos1].xpos
+		temp2 -= 0x100000
+
+		temp3 = object[arrayPos1].xpos
+		temp3 += 0x100000
+
+		temp5 = object[arrayPos1].ypos
+		temp5 += 0x100000
+
+		temp6 = object[arrayPos1].ypos
+		temp6 -= 0x100000
+			
+		CheckGreater(object.xpos, temp2)
+		temp4 = checkResult
+		CheckLower(object.xpos, temp3)
+		temp4 &= checkResult
+		CheckLower(object.ypos, temp5)
+		temp4 &= checkResult		
+		CheckGreater(object.ypos, temp6)
+		temp4 &= checkResult			
+		if temp4 == 1
+			temp0 = 1
+		end if
+
+		// Alternate Way
+		if object[arrayPos1].type == TypeName[Blank Object]
+			temp0 = 1
+		end if
+
+		if temp0 == 1 //bullseye
+			object.xpos = object[arrayPos1].xpos
+			object.ypos = object[arrayPos1].ypos
+			object.animation = ANI_JUMPING
+			object.tileCollisions = 1
+			object.interaction = 1
+			object.state = PlayerObject_HandleAir
+			object.yvel = -0x70000
+
+			temp0 = object.value1
+			temp0 /= 3
+			object.xvel = temp0
+			object.speed = temp0
+
+			object.controlLock = 0
+			
+			object.scrollTracking = 1
+			object.angle = 0
+			object.collisionMode = CMODE_FLOOR
+			object.value1 = 0
+		else
+			//animation
+			if EarControl == 1
+				object.animation = 49
+				object.frame = 1
+			else
+				object.animation = 49
+				object.frame = 0				
+			end if
+			if object[arrayPos0].propertyValue == 0
+				object.ypos = object[arrayPos1].ypos
+			end if	
+			object.tileCollisions = 0
+		end if
+		break		
+	end switch
+
+	if object.gravity == GRAVITY_GROUND
 		// Skidding Clouds
 		temp0 = object.speed
 		abs(temp0)
@@ -6249,25 +6357,6 @@ function PlayerObject_HandleRabbitGrab
 			// Just stop it just in case
 			StopSfx(SfxName[Skidding])		
 		end if	
-	else
-		switch object[arrayPos0].state
-		case 0
-		case 1
-			object.animation = 51
-
-			//Gravity & Apples		
-			object.yvel += player.gravityValue
-			break
-		case 2
-			if object[arrayPos0].value0 < 40
-				object.state = PlayerObject_HandleAir
-				player.doubleJumpState = 0
-				object.animation = ANI_JUMPING
-				object.yvel = 1
-				CallFunction(PlayerObject_HandleAirMovement)
-			end if
-			break	
-		end switch			
 	end if			
 end function	
 
