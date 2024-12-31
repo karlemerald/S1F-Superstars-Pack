@@ -6166,15 +6166,13 @@ function PlayerObject_StartRabbitGrab
 			arrayPos0 = currentPlayer
 			arrayPos0 += playerCount
 			arrayPos0 += playerCount
-			
+
 			if object.gravity == GRAVITY_GROUND
 				object.animation = 50
-				object.prevAnimation = 50
 			else
 				object.animation = 51
-				object.prevAnimation = 51				
 			end if
-			
+
 			object.state = PlayerObject_HandleRabbitGrab
 			
 			if inputDown.Up == 1
@@ -6189,16 +6187,20 @@ function PlayerObject_StartRabbitGrab
 				EarControl = 0
 			end if	
 
-			object.value1 = object.speed
+			object.value1 = object.speed	
 
 			ResetObjectEntity(arrayPos0, TypeName[Ears], EarControl, 0, 0)	
 			object[arrayPos0].priority = PRIORITY_ACTIVE
 			object[arrayPos0].direction = object.direction	
+			object[arrayPos0].drawOrder = object.value18	
+			object[arrayPos0].state = 0	
+			object[arrayPos0].value0 = 20	//size
 
 			arrayPos0++
 			ResetObjectEntity(arrayPos0, TypeName[Ears], 4, 0, 0)	
 			object[arrayPos0].priority = PRIORITY_ACTIVE
-			object[arrayPos0].direction = object.direction					
+			object[arrayPos0].direction = object.direction	
+			object[arrayPos0].drawOrder = object.value18								
 		end if	
 	end if	
 end function
@@ -6216,8 +6218,6 @@ function PlayerObject_HandleRabbitGrab
 		if object.gravity == GRAVITY_GROUND
 			object.animation = 50
 
-
-
 			//Slow Down
 			temp0 = 0x2500
 			if object.direction == FLIP_X
@@ -6234,6 +6234,7 @@ function PlayerObject_HandleRabbitGrab
 				end if
 			end if		
 		else
+			object.animation = 51		
 			//Gravity & Apples		
 			object.yvel += player.gravityValue	
 		end if	
@@ -6243,7 +6244,7 @@ function PlayerObject_HandleRabbitGrab
 		break
 	case 2
 		//come back regular player controls
-		if object[arrayPos0].value0 < 40
+		if object[arrayPos0].value0 < 20
 			object.state = PlayerObject_HandleAir
 			if object.gravity == GRAVITY_GROUND
 				object.animation = ANI_STOPPED
@@ -6255,7 +6256,6 @@ function PlayerObject_HandleRabbitGrab
 		end if
 		break
 	case 3 //kill
-
 		object.gravity = GRAVITY_AIR
 
 		//Entity Pos
@@ -6264,7 +6264,7 @@ function PlayerObject_HandleRabbitGrab
 		//Main Speed
 		temp1 = object[arrayPos1].xpos
 		temp1 -= object.xpos
-		temp1 /= 3
+		temp1 /= 4
 		object.xvel = 0
 		object.speed = 0
 		object.xpos += temp1
@@ -6272,7 +6272,7 @@ function PlayerObject_HandleRabbitGrab
 		// Check if they hit
 		temp1 = object[arrayPos1].ypos
 		temp1 -= object.ypos
-		temp1 /= 3
+		temp1 /= 4
 		object.yvel = 0
 		object.ypos += temp1
 		
@@ -6327,15 +6327,10 @@ function PlayerObject_HandleRabbitGrab
 			object.value1 = 0
 		else
 			//animation
-			if EarControl == 1
-				object.animation = 49
-				object.frame = 1
-			else
-				object.animation = 49
-				object.frame = 0				
-			end if
+			object.animation = 49
+			object.frame = EarControl
 			if object[arrayPos0].propertyValue == 0
-				object.ypos = object[arrayPos1].ypos
+				//object.ypos = object[arrayPos1].ypos
 			end if	
 			object.tileCollisions = 0
 		end if

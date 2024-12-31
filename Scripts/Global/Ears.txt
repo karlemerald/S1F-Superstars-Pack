@@ -1,7 +1,7 @@
 // ----------------------------------
 // RSDK Project: Sonic 1/Sonic 2
 // Script Description: Ears Object
-// Script Author: Christian Whitehead/Simon Thomley
+// Script Author: KarlEmerald
 // Unpacked by Rubberduckycooly's script unpacker
 // ----------------------------------
 
@@ -12,6 +12,7 @@ private alias object.value1 : object.tipFrame
 private alias object.value2 : object.tipX
 private alias object.value3 : object.timer 
 private alias object.value4 : object.enemyEntity 
+private alias object.value5 : object.tipY 
 
 private alias object.value38 : object.hitboxTop
 private alias object.value39 : object.hitboxBottom
@@ -33,15 +34,15 @@ event ObjectMain
 
 		EditFrame(0, -2, -11, object.size, 7, 118, 70)	// Edit the frame depending on object.size
 		object.tipFrame = 1 // Controls the tip
+		object.tipX = object.size
+		object.tipX -= 3
 
 		switch object.state
 		case 0 // Strech it out
-			if object.size < 66 // 66 is the limit
+			if object.size < 60 // 60 is the limit
 				object.size += 11
-				object.tipX += 11
 			else
-				object.size = 66			
-				object.tipX = 66			
+				object.size = 60					
 				object.state++
 			end if	
 			break
@@ -52,12 +53,17 @@ event ObjectMain
 			end if
 			break
 		case 2 // Pull it back
-			if object.size > 20 
+			if object.size > 5 
 				object.size -= 15
-				object.tipX -= 8
 			else		
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]
+				object.size	= 0
+				if object[0].gravity == GRAVITY_GROUND
+					object[0].animation = ANI_STOPPED
+				else	
+					object[0].animation = ANI_JUMPING
+				end if	
 			end if				
 			break	
 		case 3	
@@ -75,15 +81,15 @@ event ObjectMain
 		temp0 -= object.size
 		EditFrame(4, -4, -71, 9, object.size, 173, temp0)	// Edit the frame depending on object.size
 		object.tipFrame = 5 // Controls the tip
+		object.tipY = object.size
+		object.tipY += 10
 
 		switch object.state
 		case 0 // Strech it out
 			if object.size < 64 // 66 is the limit
-				object.size += 11
-				object.tipX += 12
+				object.size += 8
 			else
-				object.size = 64			
-				object.tipX = 73			
+				object.size = 64						
 				object.state++
 			end if	
 			break
@@ -96,10 +102,14 @@ event ObjectMain
 		case 2 // Pull it back
 			if object.size > 10 
 				object.size -= 11
-				object.tipX -= 13
 			else		
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]
+				if object[0].gravity == GRAVITY_GROUND
+					object[0].animation = ANI_STOPPED
+				else	
+					object[0].animation = ANI_JUMPING
+				end if
 			end if				
 			break	
 		case 3	
@@ -112,31 +122,149 @@ event ObjectMain
 		object.hitboxRight = 0
 		break
 
+	case 2 // Ear Diagonal
+		object.tipFrame = 9 // Controls the tip
+	
+		switch object.state
+		case 0 // Strech it out
+			if object.size < 58 // 66 is the limit
+				object.size += 8
+			else
+				object.size = 58						
+				object.state++
+			end if	
+			break
+		case 1	
+			object.timer++
+			if object.timer == 20
+				object.state++
+			end if
+			break
+		case 2 // Pull it back
+			if object.size > 10 
+				object.size -= 11
+			else		
+				object.type = TypeName[Blank Object]
+				object[+1].type = TypeName[Blank Object]
+				if object[0].gravity == GRAVITY_GROUND
+					object[0].animation = ANI_STOPPED
+				else	
+					object[0].animation = ANI_JUMPING
+				end if
+			end if				
+			break	
+		case 3	
+			break
+		end switch	
+
+		object.tipX = object.size
+		object.tipX += 3
+		object.tipY = object.size
+		object.tipY += 14	
+
+		object.hitboxTop = 0
+		object.hitboxBottom = 0
+		object.hitboxLeft = 0
+		object.hitboxRight = 0
+		break
+
 	case 4 // The Tip of it All
-		object.hitboxTop = -4
-		object.hitboxBottom = 4
-		object.hitboxLeft = -8
-		object.hitboxRight = 12
+		switch EarControl
+		case 0
+			object.hitboxTop = -2
+			object.hitboxBottom = 3
+			object.hitboxLeft = -12
+			object.hitboxRight = 12
+
+			if object[-1].state != 3
+				object.xpos = object[0].xpos
+				temp1 = object[-1].tipX	
+				temp1 <<= 16					
+				Abs(temp1)
+				if object.direction == FLIP_X
+					FlipSign(temp1)
+				end if					
+				object.xpos += temp1
+
+				object.ypos = object[0].ypos			
+				object.ypos -= 0x70000	
+				if object[0].gravity != GRAVITY_GROUND
+					object.ypos -= 0x70000
+				end if	
+			end if	
+			break
+		case 1
+			object.hitboxTop = -6
+			object.hitboxBottom = 12
+			object.hitboxLeft = -2
+			object.hitboxRight = 3
+
+			if object[-1].state != 3
+				object.ypos = object[0].ypos
+				temp1 = object[-1].tipY	
+				temp1 <<= 16					
+				Abs(temp1)			
+				object.ypos -= temp1
+
+				object.xpos = object[0].xpos			
+
+				if object[0].gravity == GRAVITY_AIR
+					object.ypos -= 0x70000
+				end if	
+			end if	
+			break
+		case 2
+			object.hitboxTop = -6
+			object.hitboxBottom = 6
+			object.hitboxLeft = -6
+			object.hitboxRight = 6
+
+			if object[-1].state != 3
+				object.ypos = object[0].ypos
+				temp1 = object[-1].tipY	
+				temp1 <<= 16					
+				Abs(temp1)			
+				object.ypos -= temp1
+
+				object.xpos = object[0].xpos
+				temp1 = object[-1].tipX	
+				temp1 <<= 16					
+				Abs(temp1)
+				if object.direction == FLIP_X
+					FlipSign(temp1)
+				end if					
+				object.xpos += temp1		
+
+				if object[0].gravity == GRAVITY_AIR
+					object.ypos -= 0x70000
+				end if	
+			end if	
+			break
+		end switch	
+
 		if object.state == 1
 			object[-1].state = 3
-			object[-1].enemyEntity = object.enemyEntity
+			object[-1].enemyEntity = object.enemyEntity		
 			if object.timer == 0
+				object[0].animation = 49
+				object[0].frame = EarControl		
 				PlaySfx(SfxName[Catch], 0)
-				if EarControl == 1
-					object[0].animation = 49
-					object[0].frame = 1
-				else
-					object[0].animation = 49
-					object[0].frame = 0				
-				end if
 				object.timer++	
-			end if			
+			end if					
 		end if
 		break	
 	end switch	
-		
+
 	if object[0].state != PlayerObject_HandleRabbitGrab
 		object.type = TypeName[Blank Object]
+		//single frame delay soooo
+		if object.state == 2
+			if object[0].gravity == GRAVITY_GROUND
+				object[0].animation = ANI_STOPPED
+			else	
+				object[0].animation = ANI_JUMPING
+			end if	
+		end if	
 	end if
 end event
 
@@ -181,27 +309,6 @@ event ObjectDraw
 		case 1	
 			if object.state == 3
 				temp0 = 0
-				arrayPos0 = object.enemyEntity
-				temp1 = object[arrayPos0].xpos
-				temp1 -= object[0].xpos
-				temp1 >>= 16
-				Abs(temp1)				
-				temp2 = object[0].xpos
-				while temp0 < temp1
-					if temp0 >= 7
-						DrawSpriteFX(2, FX_FLIP, temp2, object.ypos)
-					else	
-						DrawSpriteFX(3, FX_FLIP, temp2, object.ypos)
-					end if	
-					if object.direction == FLIP_X
-						temp2 -= 0x10000
-					else	
-						temp2 += 0x10000
-					end if	
-					temp0++
-				loop	
-
-				temp0 = 0
 				arrayPos0 = object.enemyEntity				
 				temp1 = object[0].ypos
 				if object[0].gravity == GRAVITY_AIR
@@ -239,12 +346,95 @@ event ObjectDraw
 				loop
 			end if	
 			break			
+		case 2	
+			if object.state == 3
+				temp0 = 0			
+				temp1 = object[0].xpos
+				temp2 = object[0].ypos
+				if object[0].gravity == GRAVITY_AIR
+					temp2 -= 0x70000	
+				end if	
+
+				arrayPos0 = object.enemyEntity									
+				temp4 = object[arrayPos0].xpos
+				temp4 -= object[0].xpos
+				temp4 >>= 16
+				Abs(temp4)	
+
+				temp5 = object[arrayPos0].ypos
+				temp5 -= object[0].ypos
+				temp5 >>= 16
+				Abs(temp5)
+
+				temp4 += temp5
+				temp4 /= 2
+				temp4 -= 15	
+
+				while temp0 < temp4
+					switch temp0
+					case 0
+					case 1
+						temp3 = temp0
+						temp3 += 10
+						DrawSpriteFX(temp3, FX_FLIP, temp1, temp2)
+						break	
+					case 2
+					case 3
+					case 4
+						DrawSpriteFX(12, FX_FLIP, temp1, temp2)
+						break	
+					default	
+						DrawSpriteFX(13, FX_FLIP, temp1, temp2)
+						break
+					end switch	
+					temp2 -= 0x10000
+					if object.direction == FLIP_X
+						temp1 -= 0x10000
+					else	
+						temp1 += 0x10000
+					end if	
+					temp0++
+				loop
+			else	
+				temp0 = 0		
+				temp1 = object[0].xpos
+				temp2 = object[0].ypos
+				if object[0].gravity == GRAVITY_AIR
+					temp2 -= 0x70000	
+				end if						
+				while temp0 < object.size
+					switch temp0
+					case 0
+					case 1
+						temp3 = temp0
+						temp3 += 10
+						DrawSpriteFX(temp3, FX_FLIP, temp1, temp2)
+						break	
+					case 2
+					case 3
+					case 4
+						DrawSpriteFX(12, FX_FLIP, temp1, temp2)
+						break	
+					default	
+						DrawSpriteFX(13, FX_FLIP, temp1, temp2)
+						break
+					end switch	
+					temp2 -= 0x10000
+					if object.direction == FLIP_X
+						temp1 -= 0x10000
+					else	
+						temp1 += 0x10000
+					end if	
+					temp0++
+				loop
+			end if	
+			break			
 		case 4
 			switch object[-1].propertyValue
 			case 0
 				if object[-1].state != 3
 
-					object.ypos = object[0].ypos
+					object.ypos = object[0].ypos			
 					if object[0].gravity == GRAVITY_AIR
 						if object.state != 3
 							object.ypos -= 0x70000
@@ -252,7 +442,7 @@ event ObjectDraw
 					end if
 
 					temp1 = object[-1].tipX	
-					temp1 <<= 16
+					temp1 <<= 16					
 					Abs(temp1)
 					if object.direction == FLIP_X
 						FlipSign(temp1)
@@ -264,6 +454,11 @@ event ObjectDraw
 				else
 					arrayPos0 = object.enemyEntity
 					object.xpos = object[arrayPos0].xpos
+					temp0 = 0x80000
+					if object[0].direction == FLIP_X
+						FlipSign(temp0)
+					end if
+					object.xpos -= temp0						
 					object.ypos = object[0].ypos
 					object.ypos -= 0x70000				
 				end if	
@@ -273,7 +468,7 @@ event ObjectDraw
 
 					object.xpos = object[0].xpos
 
-					temp1 = object[-1].tipX	
+					temp1 = object[-1].tipY	
 					temp1 <<= 16
 					Abs(temp1)
 
@@ -288,6 +483,67 @@ event ObjectDraw
 					arrayPos0 = object.enemyEntity
 					object.xpos = object[0].xpos
 					object.ypos = object[arrayPos0].ypos			
+				end if	
+				break
+			case 2
+				if object[-1].state != 3
+					temp1 = object[-1].tipX	
+					temp1 <<= 16					
+					Abs(temp1)
+					if object.direction == FLIP_X
+						FlipSign(temp1)
+					end if
+
+					object.xpos = object[0].xpos
+					object.xpos += temp1
+
+					temp1 = object[-1].tipY
+					temp1 <<= 16						
+					Abs(temp1)
+
+					object.ypos = object[0].ypos
+					object.ypos -= temp1				
+					if object[0].gravity == GRAVITY_AIR
+						if object.state != 3
+							object.ypos -= 0x70000
+						end if	
+					end if
+				else
+					temp0 = 0			
+					temp1 = object[0].xpos
+					temp2 = object[0].ypos
+					if object[0].gravity == GRAVITY_AIR
+						temp2 -= 0x70000	
+					end if	
+
+					arrayPos0 = object.enemyEntity									
+					temp4 = object[arrayPos0].xpos
+					temp4 -= object[0].xpos
+					temp4 >>= 16
+					Abs(temp4)	
+
+					temp5 = object[arrayPos0].ypos
+					temp5 -= object[0].ypos
+					temp5 >>= 16
+					Abs(temp5)
+
+					temp4 += temp5
+					temp4 /= 2
+					temp4 -= 13	
+
+					while temp0 < temp4
+						temp2 -= 0x10000
+						if object.direction == FLIP_X
+							temp1 -= 0x10000
+						else	
+							temp1 += 0x10000
+						end if	
+						temp0++
+					loop		
+					object.xpos = temp1
+					object.xpos += 0x10000
+					object.ypos = temp2
+					object.ypos -= 0xC0000						
 				end if	
 				break
 			end switch	
@@ -308,7 +564,7 @@ event ObjectStartup
 	
 	//Horizonal 0-3
 	SpriteFrame(-2, -11, 66, 7, 118, 70) 
-	SpriteFrame(-16, -4, 28, 7, 170, 70)
+	SpriteFrame(-12, -4, 28, 7, 170, 70)
 	SpriteFrame(-3, -11, 1, 7, 170, 70)
 	SpriteFrame(-3, -11, 1, 7, 120, 70)
 	
@@ -318,9 +574,16 @@ event ObjectStartup
 	SpriteFrame(-4, -7, 9, 1, 173, 100)
 	SpriteFrame(-4, -7, 9, 1, 173, 150)
 
-	//Diagonal 
+	//Diagonal 8-13
 	SpriteFrame(-4, -51, 54, 53, 118, 78)
 	SpriteFrame(-4, 0, 9, 11, 163, 78)	
+
+	temp0 = -1
+	temp1 = -8
+	SpriteFrame(temp0, temp1, 1, 1, 118, 129)	
+	SpriteFrame(temp0, temp1, 1, 3, 119, 128)	
+	SpriteFrame(temp0, temp1, 1, 4, 120, 127)	
+	SpriteFrame(temp0, temp1, 1, 5, 123, 124)	
 end event
 
 event RSDKDraw
