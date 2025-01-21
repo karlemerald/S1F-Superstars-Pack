@@ -381,7 +381,6 @@ event ObjectMain
 							object.state = 7
 						else
 							object.animationTimer = 0
-							object.animation = 3
 							object[-1].value4 = 32
 							PlaySfx(SfxName[Boss Hit], 0)
 						end if
@@ -404,64 +403,87 @@ event ObjectMain
 				end if
 			end if
 		end if
-	next	
+	next
+	foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
+		if object[-1].value4 == 0
+			if object.state <= 6
+				if object.state > 0
+					BoxCollisionTest(C_TOUCH, object.entityPos, -23, -16, 23, 16, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+					if checkResult == 0
+						BoxCollisionTest(C_TOUCH, object.entityPos, -16, -21, 16, 21, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+					end if	
+					if checkResult == 1
+						CallFunction(EarKillCheck)			
+					end if
+				end if
+			end if
+		end if
+	next
 end event
 
 
 event ObjectDraw
-	switch object.animation
-	case 1
-		temp0 = object.animationTimer
-		temp0 /= 6
-		object.animationTimer++
-		object.animationTimer %= 12
-		DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
-		break
-	case 2
-		temp0 = object.animationTimer
-		temp0 %= 10
-		temp0 /= 5
-		temp0 += 9
-		object.animationTimer++
-		if object.animationTimer == 50
-			object.animationTimer = 0
-			if object[0].animation != ANI_DYING
-				object.animation = 1
-			end if
-		end if
-		DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
-		break
-	case 3
-		temp0 = object.animationTimer
+	if object[-1].value4 > 0
+		temp0 = object[-1].value4
 		temp0 &= 1
 		temp0 += 2
-		object.animationTimer++
-		if object.animationTimer == 30
-			object.animationTimer = 0
-			object.animation = 1
-		end if
 		DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
-		break
-	case 4
-		temp0 = object.animationTimer
-		temp0 >>= 5
-		temp0 += 4
-		object.animationTimer++
-		object.animationTimer &= 63
-		DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
-		break
-	case 5
-		DrawSpriteFX(6, FX_FLIP, object.xpos, object.ypos)
-		break
-	case 6
-		temp0 = object.animationTimer
-		temp0 >>= 2
-		temp0 += 7
-		object.animationTimer++
-		object.animationTimer %= 7
-		DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
-		break
-	end switch
+	else
+		switch object.animation
+		case 1
+			temp0 = object.animationTimer
+			temp0 /= 6
+			object.animationTimer++
+			object.animationTimer %= 12
+			DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
+			break
+		case 2
+			temp0 = object.animationTimer
+			temp0 %= 10
+			temp0 /= 5
+			temp0 += 9
+			object.animationTimer++
+			if object.animationTimer == 50
+				object.animationTimer = 0
+				if object[0].animation != ANI_DYING
+					object.animation = 1
+				end if
+			end if
+			DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
+			break
+		case 3
+			//unused
+			temp0 = object.animationTimer
+			temp0 &= 1
+			temp0 += 2
+			object.animationTimer++
+			if object.animationTimer == 30
+				object.animationTimer = 0
+				object.animation = 1
+			end if
+			DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
+			break
+		case 4
+			temp0 = object.animationTimer
+			temp0 >>= 5
+			temp0 += 4
+			object.animationTimer++
+			object.animationTimer &= 63
+			DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
+			break
+		case 5
+			DrawSpriteFX(6, FX_FLIP, object.xpos, object.ypos)
+			break
+		case 6
+			temp0 = object.animationTimer
+			temp0 >>= 2
+			temp0 += 7
+			object.animationTimer++
+			object.animationTimer %= 7
+			DrawSpriteFX(temp0, FX_FLIP, object.xpos, object.ypos)
+			break
+		end switch
+	end if
 	switch object[-1].value6
 	case 1
 		temp0 = object[-1].value7

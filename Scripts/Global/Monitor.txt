@@ -158,6 +158,16 @@ event ObjectMain
 			end if	
 		end if	
 	next
+
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			if object[arrayPos0].propertyValue == 4
+				object[arrayPos0].state = 1
+				object[arrayPos0].value4 = object.entityPos
+			end if
+		end if	
+	next
 	
 	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
 		if object.value20 == 1

@@ -149,6 +149,12 @@ event ObjectMain
 			CallFunction(CorkKill)
 		end if	
 	next
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -14, -14, 14, 14, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+		end if	
+	next
 
 		
 	switch object.animation
