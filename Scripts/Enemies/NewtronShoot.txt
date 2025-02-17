@@ -101,6 +101,28 @@ event ObjectMain
 			break
 		end switch
 	next
+	foreach (TypeName[Lightning Spark], arrayPos0, ACTIVE_ENTITIES)
+		switch object.state
+		case 2
+		case 3
+			BoxCollisionTest(C_TOUCH, object.entityPos, -12, -14, 12, 14, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				CallFunction(CorkKill)
+			end if
+			break
+		end switch
+	next
+	foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
+		switch object.state
+		case 2
+		case 3
+			BoxCollisionTest(C_TOUCH, object.entityPos, -12, -14, 12, 14, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				CallFunction(EarKillCheck)
+			end if
+			break
+		end switch
+	next
 end event
 
 

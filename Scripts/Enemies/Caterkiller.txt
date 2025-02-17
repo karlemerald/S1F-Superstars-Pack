@@ -121,7 +121,21 @@ function Caterkiller_Function100
 		object.xpos = temp5
 		object.ypos = temp6
 	next
-		
+
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -8, -8, 8, 8, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(CorkKill)
+		end if	
+	next
+
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -8, -8, 8, 8, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+		end if	
+	next
+
 	if temp7 == 1
 		temp0 = object.frame
 		temp0 <<= 15

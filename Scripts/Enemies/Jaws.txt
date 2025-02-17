@@ -107,7 +107,21 @@ event ObjectMain
 			if checkResult == 1
 				CallFunction(PlayerObject_BadnikBreak)
 			end if
-		next		
+		next	
+		foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -16, -12, 16, 12, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				CallFunction(CorkKill)
+			end if	
+		next
+
+		foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -16, -12, 16, 12, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				CallFunction(EarKillCheck)
+				object.state = 10 // 10 is used here because of easy copy & paste
+			end if	
+		next			
 	end if
 	object.frame = object.animationTimer
 	object.frame >>= 3

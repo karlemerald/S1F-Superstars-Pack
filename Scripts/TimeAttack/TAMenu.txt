@@ -890,9 +890,27 @@ event ObjectStartup
 	SpriteFrame(0, 0, 3, 18, 801, 176) //154 .
 	SpriteFrame(0, 0, 6, 18, 805, 176) //155 -
 
-	SpriteFrame(19, 1, 16, 15, 502, 109) //156 Trip Silhouette
+	SpriteFrame(20, 1, 16, 15, 502, 109) //156 Trip Silhouette
 	SpriteFrame(-50, 0, 101, 30, 544, 195) //157 Trip English	
 	SpriteFrame(-72, 0, 144, 14, 607, 142) //158 Trip Japanese Name
+
+	SpriteFrame(19, 0, 18, 16, 519, 108) //159 fang Silhouette
+	switch saved.FangName
+	case 0
+		SpriteFrame(-44, 0, 87, 29, 646, 195) //160 fang English	
+		break
+	case 1
+		SpriteFrame(-38, 0, 75, 29, 734, 195) //160 fang English	
+		break
+	case 2		
+		SpriteFrame(-42, 0, 84, 29, 646, 226) //160 fang English	
+		break
+
+	case 3
+		SpriteFrame(-41, 0, 82, 29, 734, 226) //160 fang English	
+		break
+	end switch		
+	SpriteFrame(-72, 0, 144, 14, 607, 142) //161 fang Japanese Name
 	
 	SetMusicTrack("TimeAttack.ogg", 1, 17556)
 	//SetMusicTrack("StartingTheShow.ogg", 1, 92561)
@@ -1419,9 +1437,9 @@ function SecondMenu
 		temp4 = 159
 		break	
 	case 5
-		temp2 = 110
-		temp3 = 111
-		temp4 = 121
+		temp2 = 160
+		temp3 = 161
+		temp4 = 162
 		break			
 	case 6
 		temp2 = 122

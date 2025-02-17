@@ -94,6 +94,18 @@ function Orbinaut_Function107
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	next
+	foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -8, -8, 8, 8, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+		end if
+	next
+	foreach (TypeName[Lightning Spark], arrayPos0, ACTIVE_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -8, -8, 8, 8, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(CorkKill)
+		end if
+	next
 		
 end function
 

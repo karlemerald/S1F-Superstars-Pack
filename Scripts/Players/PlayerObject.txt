@@ -205,6 +205,9 @@ reserve function PlayerObject_HandleTripClimb
 reserve function PlayerObject_HandleCorkShoot
 reserve function PlayerObject_HandleFangBounce
 reserve function PlayerObject_CorkPos
+reserve function PlayerObject_DragonIdle
+reserve function PlayerObject_DragonFly
+reserve function PlayerObject_DragonGoldenLight
 
 // doublejumpstate for Amy
 //0 = Not jumped
@@ -242,6 +245,7 @@ public value RabbitObjectCheck = 0;
 public value EarControl = 0;
 public value EarButtonCheck = 0;
 public value EarXvelCancel = 0;
+public value DragonState = 0;
 
 // Tables
 public table PlayerObject_SonicSuperPal
@@ -390,6 +394,29 @@ public table PlayerObject_FangSuperAltPal
 	0xC060E0, 0xE080E0, 0xE0A0E0, 0xE0C0E0
 	0xA040C0, 0xC060E0, 0xE080E0, 0xE0A0E0
 	0x8020A0, 0xA040C0, 0xC060E0, 0xE080E0
+end table
+
+public table PlayerObject_TripSuperPal
+	0xE0A000, 0xE08F00, 0xC06020, 0xA04020
+	0xE0E0A0, 0xE0E080, 0xE0C000, 0xE0A000
+	0xE0E0C0, 0xE0E0A0, 0xE0E000, 0xE0C000
+	0xE0E0E0, 0xE0E0C0, 0xE0E0A0, 0xE0E000
+	0xE0E0E0, 0xE0E0E0, 0xE0E0C0, 0xE0E0A0
+	0xE0E0C0, 0xE0E0A0, 0xE0E000, 0xE0C000
+	0xE0E0A0, 0xE0E080, 0xE0C000, 0xE0A000	
+
+	0xA06020, 0x804000, 0x480000	//reds	
+	0xE00000, 0x800000, 0x400000	//norm	
+end table
+
+public table PlayerObject_TripSuperAltPal
+	0xE0A000, 0xE07F00, 0xC06020, 0xA04020
+	0xE0E0A0, 0xE0E080, 0xE0C000, 0xE0A000
+	0xE0E0C0, 0xE0E0A0, 0xE0E000, 0xE0C000
+	0xE0E0E0, 0xE0E0C0, 0xE0E0A0, 0xE0E000
+	0xE0E0E0, 0xE0E0E0, 0xE0E0C0, 0xE0E0A0
+	0xE0E0C0, 0xE0E0A0, 0xE0E000, 0xE0C000
+	0xE0E0A0, 0xE0E080, 0xE0C000, 0xE0A000	
 end table
 
 public table PlayerObject_SonicPhysicsTable
@@ -679,49 +706,65 @@ end function
 
 function PlayerObject_HandleSuperPalTrip
 	if PlayerObject_SuperState == 1
+
+		//different reds
+		GetTableValue(temp0, 27, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 70, temp0)
+		GetTableValue(temp0, 28, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 71, temp0)
+		GetTableValue(temp0, 29, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 72, temp0)
+
 		PlayerObject_value3++
-		if PlayerObject_value3 >= 12
+		if PlayerObject_value3 >= 8
 			PlayerObject_value3 = 0
 			PlayerObject_value2 += 4
 			if PlayerObject_value2 >= 24
-				PlayerObject_value2 = 0
+				PlayerObject_value2 = 4
 			end if
 		end if
 	else
-		if PlayerObject_value2 > 12
-			FlipSign(PlayerObject_value2)
-			PlayerObject_value2 += 24
-		end if
+		//different reds
+		GetTableValue(temp0, 31, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 70, temp0)
+		GetTableValue(temp0, 32, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 71, temp0)
+		GetTableValue(temp0, 30, PlayerObject_TripSuperPal)
+		SetPaletteEntry(0, 72, temp0)	
+
 		PlayerObject_value3++
-		if PlayerObject_value3 >= 12
+		if PlayerObject_value3 >= 8
 			PlayerObject_value3 = 0
 			PlayerObject_value2 -= 4
 			if PlayerObject_value2 <= 0
 				PlayerObject_value2 = 0
 				PlayerObject_SuperState = 0
 			end if
-		end if
+			if PlayerObject_value2 >= 4
+				PlayerObject_value2 = 4
+			end if
+		end if		
 	end if
 	temp1 = PlayerObject_value2
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperPal)
-	SetPaletteEntry(0, 13, temp0)
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperAltPal)
-	SetPaletteEntry(1, 13, temp0)
-	temp1++
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperPal)
-	SetPaletteEntry(0, 17, temp0)
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperAltPal)
-	SetPaletteEntry(1, 17, temp0)
-	temp1++
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperPal)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperPal)
 	SetPaletteEntry(0, 18, temp0)
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperAltPal)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperAltPal)
 	SetPaletteEntry(1, 18, temp0)
 	temp1++
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperPal)
-	SetPaletteEntry(0, 16, temp0)
-	GetTableValue(temp0, temp1, PlayerObject_TailsSuperAltPal)
-	SetPaletteEntry(1, 16, temp0)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperPal)
+	SetPaletteEntry(0, 17, temp0)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperAltPal)
+	SetPaletteEntry(1, 17, temp0)
+	temp1++
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperPal)
+	SetPaletteEntry(0, 68, temp0)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperAltPal)
+	SetPaletteEntry(1, 68, temp0)
+	temp1++
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperPal)
+	SetPaletteEntry(0, 69, temp0)
+	GetTableValue(temp0, temp1, PlayerObject_TripSuperAltPal)
+	SetPaletteEntry(1, 69, temp0)
 end function
 
 
@@ -934,6 +977,15 @@ end function
 function PlayerObject_EndSuper
 	if stage.playerListPos == 0
 		LoadAnimation("Sonic.ani")
+	end if
+	if DragonState == 1
+		LoadAnimation("Trip.ani")
+		DragonState = 0
+		object.state = PlayerObject_HandleAir
+		object.animation = ANI_JUMPING
+		CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)	
+		player.doubleJumpState = 2
+		object.value2 = 0
 	end if
 	if music.currentTrack == 7
 		PlayMusic(0)
@@ -2215,7 +2267,6 @@ function PlayerObject_SuperTransform
 				end if
 				break
 			case 13
-				LoadAnimation("DragonTrip.ani")
 				break
 			end switch
 			object[currentPlayer].state = PlayerObject_Transforming
@@ -3105,6 +3156,9 @@ end function
 
 
 function PlayerObject_HandleAir
+	if DragonState == 1
+		object.state = PlayerObject_DragonFly	
+	else
 		CallFunction(PlayerObject_HandleAirAcceleration)
 		if object.gravity == GRAVITY_AIR
 			CallFunction(PlayerObject_HandleAirMovement)
@@ -3443,6 +3497,7 @@ function PlayerObject_HandleAir
 				player.skidding = 0
 			end if
 		end if
+	end if	
 end function
 
 
@@ -5520,6 +5575,18 @@ function PlayerObject_StartTripMove
 				currentPlayer = object.entityPos
 				CallFunction(PlayerObject_SuperTransform)
 			end if
+
+			if PlayerObject_SuperState == 1
+				PlaySfx(SfxName[Transform], false)
+				
+				if DragonState == 0
+					LoadAnimation("DragonTrip.ani")
+					object.animation = 1
+					DragonState = 1
+					object.value2 = 0
+					CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)
+				end if	
+			end if
 		end if
 		
 		if object.jumpPress == 1
@@ -5990,7 +6057,7 @@ end function
 
 function PlayerObject_HandleCorkShoot
 	fangGunTimer = 100
-	CreateTempObject(TypeName[Cork], 0, object.xpos, object.ypos)
+	CreateTempObject(TypeName[Lightning Spark], 1, object.xpos, object.ypos)
 	FangCoolDown = 20
 	object[tempObjectPos].frame = 0		
 	if object.direction == FLIP_NONE
@@ -6352,8 +6419,230 @@ function PlayerObject_HandleRabbitGrab
 			// Just stop it just in case
 			StopSfx(SfxName[Skidding])		
 		end if	
-	end if			
+	end if		
 end function	
+
+
+function PlayerObject_DragonFly
+	object.animation = 1	
+
+	if object.up == 1
+		temp0 = player.speedCap
+		FlipSign(temp0)
+		if object.yvel > temp0
+			object.yvel -= player.airAcceleration
+
+			if object.yvel > 0
+				object.yvel -= player.airAcceleration
+			end if
+		end if
+	else 
+		if object.down == 1
+			if object.yvel < player.speedCap
+				object.yvel += player.airAcceleration
+
+				if object.yvel < 0
+					object.yvel += player.airAcceleration
+				end if
+			end if
+		else		
+			if object.yvel < 0
+				object.yvel += player.deceleration
+
+				if object.yvel > 0
+					object.yvel = 0
+				end if
+			else 
+				object.yvel -= player.deceleration
+
+				if object.yvel < 0
+					object.yvel = 0
+				end if	
+			end if
+		end if	
+	end if
+
+	temp0 = object.yvel
+	temp1 = player.speedCap
+	FlipSign(temp1)	
+	if temp0 >= temp1 
+		if temp0 > player.speedCap
+			// player1->velocity.y = velY - (player1->acceleration >> 1) - player1->acceleration;
+			temp2 = temp0
+			temp3 = player.airAcceleration
+			temp3 >>= 1
+			temp2 -= temp3
+			temp2 -= player.airAcceleration
+			object.yvel = temp2
+		end if
+	else 
+		// player1->velocity.y = player1->acceleration + velY + (player1->acceleration >> 1);
+		temp2 = temp0
+		temp3 = player.airAcceleration
+		temp3 >>= 1
+		temp2 += temp3
+		temp2 += player.airAcceleration
+		object.yvel = temp2		
+	end if
+
+	if object.left == 1
+		temp0 = player.speedCap
+		FlipSign(temp0)
+		if object.xvel > temp0
+			object.xvel -= player.airAcceleration
+
+			if object.xvel > 0
+				object.xvel -= player.airAcceleration
+			end if
+		end if
+
+		object.direction = FLIP_X
+	else 
+		if object.right == 1
+			if object.xvel < player.speedCap
+				object.xvel += player.airAcceleration
+
+				if object.xvel < 0
+					object.xvel += player.airAcceleration
+				end if
+			end if
+			object.direction = FLIP_NONE
+		else 
+			if object.xvel < 0
+				object.xvel += player.deceleration
+
+				if object.xvel > 0
+					object.xvel = 0
+				end if
+			else 
+				object.xvel -= player.deceleration
+
+				if object.xvel < 0
+					object.xvel = 0
+				end if
+			end if
+		end if	
+	end if
+
+	temp0 = object.xvel
+	temp1 = player.speedCap
+	FlipSign(temp1)	
+	if temp0 >= temp1 
+		if temp0 > player.speedCap
+			// player1->velocity.y = velY - (player1->acceleration >> 1) - player1->acceleration;
+			temp2 = temp0
+			temp3 = player.airAcceleration
+			temp3 >>= 1
+			temp2 -= temp3
+			temp2 -= player.airAcceleration
+			object.xvel = temp2
+		end if
+	else 
+		// player1->velocity.y = player1->acceleration + velY + (player1->acceleration >> 1);
+		temp2 = temp0
+		temp3 = player.airAcceleration
+		temp3 >>= 1
+		temp2 += temp3
+		temp2 += player.airAcceleration
+		object.xvel = temp2		
+	end if
+
+	if object.gravity == GRAVITY_GROUND
+		CallFunction(PlayerObject_ResetOnFloor)
+		object.state = PlayerObject_DragonIdle
+		object.gravity = GRAVITY_GROUND
+	end if
+
+	//De-transform
+	if object.animation > 4
+		LoadAnimation("Trip.ani")
+		DragonState = 0
+		object.state = PlayerObject_HandleAir
+		object.animation = ANI_JUMPING
+		CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)	
+		player.doubleJumpState = 2
+		object.value2 = 0
+	end if	
+end function
+
+
+function PlayerObject_DragonGoldenLight
+	object.animation = ANI_JUMPING
+	if object.gravity == GRAVITY_AIR
+		CallFunction(PlayerObject_HandleAirAcceleration)
+		CallFunction(PlayerObject_HandleAirMovement)
+	else
+		object.gravity = GRAVITY_GROUND
+		CallFunction(PlayerObject_HandleMovement)
+		temp0 = object.speed
+		abs(temp0)
+		CheckGreater(temp0, 0x97000)
+		temp1 = checkResult
+
+		CheckGreater(player.groundRotation, 0)
+		temp1 |= checkResult
+		if temp1 == false
+			object.value1 = 0
+			object.animation = 1
+			object.state = PlayerObject_DragonIdle
+			object.iypos -= 10
+		end if			
+	end if
+end function
+
+
+function PlayerObject_DragonIdle
+	if object.gravity == GRAVITY_AIR
+		object.state = PlayerObject_DragonFly
+	else
+		if object.pushing == 2
+			object.animation = 2
+		else
+			if object.speed == 0
+				object.animation = ANI_STOPPED
+			else	
+				object.value1 = 0
+				object.animation = 1
+			end if	
+		end if	
+
+		//De-transform
+		if object.animation > 4
+			LoadAnimation("Trip.ani")
+			DragonState = 0
+			object.state = PlayerObject_HandleAir
+			object.animation = ANI_JUMPING
+			CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)	
+			player.doubleJumpState = 2
+			object.value2 = 0
+		end if	
+
+		CallFunction(PlayerObject_HandleMovement)
+
+		object.yvel = 0
+		object.gravity = GRAVITY_GROUND
+		//object.speed = object.xvel
+
+
+		if player.groundRotation > 132
+			if player.groundRotation < 384
+				LoadAnimation("Trip.ani")
+				DragonState = 0
+				object.state = PlayerObject_HandleAir
+				object.animation = ANI_JUMPING
+				CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)	
+				player.doubleJumpState = 2
+				object.value2 = 0
+			end if	
+		end if 
+
+		if object.up == 1
+			object.yvel -= player.airAcceleration
+			object.state = PlayerObject_DragonFly
+			object.gravity = GRAVITY_AIR
+		end if
+	end if
+end function
 
 
 event ObjectMain
@@ -6518,7 +6807,14 @@ event ObjectMain
 					screen.adjustCameraY = player.jumpOffset
 				else
 					if object.animation == ANI_JUMPING
-						screen.adjustCameraY = player.jumpOffset
+						if DragonState == 1
+							if screen.adjustCameraY == player.jumpOffset
+								screen.adjustCameraY = 0
+								object.iypos += player.jumpOffset
+							end if
+						else
+							screen.adjustCameraY = player.jumpOffset
+						end if	
 					else
 						if screen.adjustCameraY == player.jumpOffset
 							screen.adjustCameraY = 0
@@ -6596,6 +6892,24 @@ event ObjectMain
 	end if
 	CallFunction(PlayerObject_ProcessSuperForms)
 
+	if DragonState == 1
+		if object.animation > 4
+			CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)			
+			LoadAnimation("Trip.ani")
+			DragonState = 0
+			object.state = PlayerObject_HandleAir
+			object.animation = ANI_JUMPING
+			player.doubleJumpState = 2
+			object.value2 = 0
+		end if		
+
+		if object.value2 < 2
+			object.value2++
+		else
+			object.value2 = 2
+		end if	
+	end if
+
 	if inputPress.buttonY == 1
 		if options.gameMode == 2
 			if stage.timeEnabled == 1
@@ -6609,11 +6923,23 @@ event ObjectMain
 			end if
 		else
 			if PlayerObject_SuperState == 1
-				if object.animation != ANI_SUPER_TRANSFORM
-					if saved.Supercancel == 1
-						CallFunction(PlayerObject_EndSuper)
+				if DragonState == 1
+					if object.value2 == 2
+						CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)	
+						LoadAnimation("Trip.ani")
+						DragonState = 0
+						object.state = PlayerObject_HandleAir
+						object.animation = ANI_JUMPING
+						player.doubleJumpState = 2
+						object.value2 = 0
+					end if	
+				else
+					if object.animation != ANI_SUPER_TRANSFORM
+						if saved.Supercancel == 1
+							CallFunction(PlayerObject_EndSuper)
+						end if
 					end if
-				end if
+				end if	
 			end if
 		end if
 	end if
@@ -6647,12 +6973,28 @@ event ObjectDraw
 				object.animationSpeed = 0
 			end if
 			
-			if saved.rotate == 0
-				CallFunction(PlayerObject_Force45)
+			CheckEqual(object.state, PlayerObject_DragonGoldenLight)
+			temp7 = checkResult
+			CheckEqual(object.gravity, GRAVITY_AIR)
+			temp7 &= checkResult
+			CheckEqual(object.animation, ANI_JUMPING)
+			temp7 &= checkResult
+			if temp7 == true
+				temp0 = object.xvel
+				temp1 = object.yvel
+				
+				ATan2(object.rotation, temp0, temp1)	
+				object.rotation <<= 1
+				object.direction = FLIP_NONE
+				DrawObjectAnimation()
 			else
-				CallFunction(PlayerObject_ManiaRotate)
-				//DrawObjectAnimation()
-			end if
+				if saved.rotate == 0
+					CallFunction(PlayerObject_Force45)
+				else
+					CallFunction(PlayerObject_ManiaRotate)
+					//DrawObjectAnimation()
+				end if
+			end if	
 		end if
 end event
 
@@ -6809,6 +7151,11 @@ event ObjectStartup
 		screen.cameraStyle = 0
 		screen.cameraTarget = 0
 		currentPlayer = 0
+		DragonState = 0
+		fangGunEnabled = 0
+		fangGunTimer = 0
+		FangCoolDown = 0
+
 		switch stage.playerListPos
 			case 3
 				stage.playerListPos = 0

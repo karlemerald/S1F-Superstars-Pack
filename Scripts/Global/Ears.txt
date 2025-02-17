@@ -101,7 +101,7 @@ event ObjectMain
 			break
 		case 2 // Pull it back
 			if object.size > 10 
-				object.size -= 11
+				object.size -= 7
 			else		
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]

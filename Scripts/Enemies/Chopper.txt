@@ -56,7 +56,7 @@ event ObjectMain
 		end if
 	next
 
-	foreach (TypeName[Cork], arrayPos0, ALL_ENTITIES)
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
 		BoxCollisionTest(C_TOUCH, object.entityPos, -12, -14, 12, 14, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
 		if checkResult == 1
 			CallFunction(CorkKill)

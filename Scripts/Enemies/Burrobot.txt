@@ -170,6 +170,13 @@ event ObjectMain
 			object.state = 2
 		end if
 		break
+	case 10
+		// Object State 10, otherwise known as the "you're about to die" code
+		// This just freezes the badnik in place.
+		object.xvel = 0
+		object.yvel = 0
+		object.speed = 0
+		break			
 	end switch
 	if object.outOfBounds == 1
 		temp0 = object.xpos
@@ -198,7 +205,22 @@ event ObjectMain
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	next
-	
+
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -12, -18, 12, 18, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(CorkKill)
+		end if	
+	next
+
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -12, -18, 12, 18, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+			object.state = 10 // 10 is used here because of easy copy & paste
+		end if	
+	next
+
 	object.frame = object.animationTimer
 	object.frame >>= 2
 	switch object.animation

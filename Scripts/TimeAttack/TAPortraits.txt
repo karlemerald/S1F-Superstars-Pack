@@ -50,7 +50,7 @@ event ObjectStartup
 	SpriteFrame(-54, -66, 123, 133, 264, 1) //2 Knuckles
 	SpriteFrame(-62, -74, 128, 147, 1, 299) //3 Amy
 	SpriteFrame(-56, -74, 112, 144, 1, 447) //4 Trip
-	SpriteFrame(-56, -74, 112, 144, 1, 447) //4 Fang
+	SpriteFrame(-67, -65, 134, 129, 227, 447) //4 Fang
 	SpriteFrame(-45, -76, 90, 153, 259, 284) //4 Rabbit
 	SpriteFrame(-44, -62, 91, 122, 388, 1) //4 Super
 
@@ -60,7 +60,7 @@ event ObjectStartup
 	SpriteFrame(-54, -66, 123, 133, 264, 150) //7 Knuckles
 	SpriteFrame(-62, -74, 128, 147, 130, 299) //8 Amy
 	SpriteFrame(-56, -74, 112, 144, 114, 447) //4 Trip
-	SpriteFrame(-56, -74, 112, 144, 114, 447) //4 Fang
+	SpriteFrame(-67, -65, 134, 129, 362, 447) //4 Fang
 	SpriteFrame(-45, -76, 90, 153, 350, 284) //4 Rabbit
 	SpriteFrame(-44, -62, 91, 122, 388, 150) //9 Super
 	

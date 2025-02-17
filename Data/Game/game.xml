@@ -4,7 +4,9 @@
   <palette>
     <color bank="0" index="68" r="192" g="96" b="32" />
     <color bank="0" index="69" r="160" g="64" b="32" />
-    <color bank="0" index="72" r="254" g="0" b="255" />
+    <color bank="0" index="70" r="224" g="0" b="0" />
+    <color bank="0" index="71" r="128" g="0" b="0" />
+    <color bank="0" index="72" r="64" g="0" b="0" />
     <color bank="0" index="86" r="96" g="0" b="128" />
     <color bank="0" index="87" r="128" g="32" b="160" />
     <color bank="0" index="88" r="160" g="64" b="192" />
@@ -15,10 +17,8 @@
   </palette>
   <objects>
     <object name="Ears" script="Global/Ears.txt" forceLoad="true" />
-    <object name="Cork" script="Global/Cork.txt" forceLoad="true" />
   </objects>
   <variables>
-    <variable name="FangCoolDown" value="0" />
     <variable name="ANI_FANG_BOUNCE" value="53" />
     <variable name="ANI_GUN_WALKING" value="54" />
     <variable name="ANI_GUN_RUNNING" value="55" />
@@ -27,6 +27,7 @@
     <variable name="ANI_GUN_IDLE" value="58" />
     <variable name="fangGunEnabled" value="0" />
     <variable name="fangGunTimer" value="0" />
+    <variable name="FangCooldown" value="0" />    
   </variables>
   <sounds>
     <soundfx name="TripJump" path="TripDoubleJump.ogg" />

@@ -110,7 +110,22 @@ event ObjectMain
 			end if
 		end if
 	next
-							
+
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -18, -10, 18, 18, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(CorkKill)
+		end if	
+	next
+
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -18, -10, 18, 18, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+			object.state = 10 // 10 is used here because of easy copy & paste
+		end if	
+	next
+
 	if object.animation == 0
 		object.frame = object.animationTimer
 		object.frame >>= 3

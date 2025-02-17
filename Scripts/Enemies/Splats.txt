@@ -42,9 +42,11 @@ end function
 
 event ObjectMain
 	object.priority = PRIORITY_ACTIVE
-	object.xpos += object.xvel
-	object.ypos += object.yvel
-	object.yvel += 0x3800
+	if object.state != 10
+		object.xpos += object.xvel
+		object.ypos += object.yvel
+		object.yvel += 0x3800
+	end if	
 	if object.yvel > 0
 		ObjectTileCollision(CSIDE_FLOOR, 0, 16, 0)
 		temp0 = checkResult
@@ -96,7 +98,22 @@ event ObjectMain
 			CallFunction(PlayerObject_BadnikBreak)
 		end if
 	next
-	
+
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(CorkKill)
+		end if	
+	next
+
+	foreach (TypeName[Ears], arrayPos0, ALL_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -10, -20, 6, 20, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+		if checkResult == 1
+			CallFunction(EarKillCheck)
+			object.state = 10 // 10 is used here because of easy copy & paste
+		end if	
+	next
+
 end event
 
 

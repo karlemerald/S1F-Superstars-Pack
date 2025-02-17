@@ -1,12 +1,12 @@
 // ----------------------------------
-// RSDK Project: Sonic 1 Forever
-// Script Description: Bullet Object
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: Lightning Spark Object
 // Script Author: Christian Whitehead/Simon Thomley
 // Unpacked by Rubberduckycooly's script unpacker
 // ----------------------------------
 
 //-------Aliases-------//
-private alias 18 : TYPE_BULLET
+private alias 30 : TYPE_LIGHTNINGSPARK
 
 
 // Static Values
@@ -68,31 +68,26 @@ function CorkKill
 end function
 
 event ObjectMain
-	if object.propertyValue == 10
-		switch object.frame
-			case 0
-				object.alpha = 224
-				break
-			case 1
-				object.alpha = 255
-				break
-			case 2
-				object.alpha = 224
-				break
-			case 3
-				object.alpha = 192
-				break
-			case 4
-				object.alpha = 160
-				break
-		end switch
+	switch object.propertyValue
+	case 0
+		object.drawOrder = object[0].value18
+		object.xpos += object.xvel
+		object.ypos += object.yvel
 		object.frame++
-		object.drawOrder = 6
-		
-		if object.frame >= 5		
+		if object.frame >= 3
+			object.frame = 0
+		end if
+		object.animationTimer++
+		if object.animationTimer >= 22
 			object.type = TypeName[Blank Object]
 		end if		
-	else
+		object.value40 = 0
+		object.value38 = 0
+		object.value41 = 0
+		object.value39 = 0
+		break
+
+	case 1
 		object.xpos += object.xvel
 		object.ypos += object.yvel
 		if object.outOfBounds == 1
@@ -120,10 +115,39 @@ event ObjectMain
 		object.value41 = temp1
 		object.value39 = 3
 		
+		object.frame = 3
 		if object.xvel < 0
 			object.direction = FLIP_X
 		end if
-	end if	
+		break
+
+	case 10
+		switch object.frame
+			case 0
+				object.alpha = 224
+				break
+			case 1
+				object.alpha = 255
+				break
+			case 2
+				object.alpha = 224
+				break
+			case 3
+				object.alpha = 192
+				break
+			case 4
+				object.alpha = 160
+				break
+		end switch
+		object.frame++
+		object.drawOrder = 6
+		
+		if object.frame >= 5		
+			object.type = TypeName[Blank Object]
+		end if	
+		break
+	end switch
+
 end event
 
 
@@ -131,13 +155,23 @@ event ObjectDraw
 	if object.propertyValue == 10
 		DrawRect(0, 0, screen.xsize, screen.ysize, color7, color7, color7, object.alpha)
 	else
+		if object.propertyValue == 1
+			LoadSpriteSheet("Players/Fang3.gif")
+		else
+			LoadSpriteSheet("Global/Items3.gif")
+		end if
 		DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
+		LoadSpriteSheet("Global/Items3.gif")
 	end if	
 end event
 
 
 event ObjectStartup
-	LoadSpriteSheet("Players/Fang3.gif")
+	LoadSpriteSheet("Global/Items3.gif")
+	SpriteFrame(0, 0, 1, 1, 1, 1)
+	SpriteFrame(-3, -3, 6, 6, 150, 84)
+	SpriteFrame(-8, -8, 16, 16, 157, 84)
+
 	SpriteFrame(-4, -4, 7, 7, 207, 1)	
 end event
 

@@ -144,7 +144,18 @@ event ObjectMain
 		temp0++
 	loop
 
-	
+	temp0 = 0
+	while temp0 < 35
+		GetTableValue(object.store, temp0, PlayerObject_TripSuperPal)
+		CallFunction(processColor)
+		SetTableValue(object.store, temp0, PlayerObject_TripSuperPal)
+				
+		GetTableValue(object.store, temp0, PlayerObject_TripSuperAltPal)
+		CallFunction(processColor)
+		SetTableValue(object.store, temp0, PlayerObject_TripSuperAltPal)
+		temp0++
+	loop
+
 	object.type = TypeName[Blank Object]
 end event
 
