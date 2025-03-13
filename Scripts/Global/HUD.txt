@@ -608,7 +608,7 @@ function HUD_DrawUsual
 
 	temp2 = 104
 	temp2 += temp5
-	DrawNumbers(0, temp2, 9, object[0].value24, 7, 8, 0)
+	DrawNumbers(0, temp2, 9, player.score, 7, 8, 0)
 	
 	if saved.Timer == 0
 		temp2 = 67

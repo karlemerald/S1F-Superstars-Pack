@@ -123,7 +123,7 @@ event ObjectMain
 		end if
 	end if
 
-	foreach (TypeName[Cork], arrayPos0, ALL_ENTITIES)
+	foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
 		BoxCollisionTest(C_TOUCH, object.entityPos, -15, -14, 15, 16, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
 		if checkResult == 1
 			object.state = 0
@@ -205,15 +205,15 @@ event ObjectMain
 				end if	
 			end if		
 		else
-			if object[0].state != PlayerObject_HandleRabbitGrab
-				if object[0].state != PlayerObject_HandleTripClimb
-					CheckGreater(object[currentPlayer].yvel, -1)
-					temp0 = checkResult
-					CheckEqual(object[currentPlayer].gravity, GRAVITY_GROUND)
-					temp0 |= checkResult
-				else
-					temp0 = 1
-				end if						
+			CheckNotEqual(object[0].state, PlayerObject_HandleRabbitGrab)
+			temp1 = checkResult	
+			CheckNotEqual(object[0].state, PlayerObject_HandleTripClimb)
+			temp1 &= checkResult
+			if temp1 == 1	
+				CheckGreater(object[currentPlayer].yvel, -1)
+				temp0 = checkResult
+				CheckEqual(object[currentPlayer].gravity, GRAVITY_GROUND)
+				temp0 |= checkResult				
 			else
 				temp0 = 1
 			end if	

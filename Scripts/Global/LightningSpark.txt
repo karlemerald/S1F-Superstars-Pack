@@ -121,6 +121,67 @@ event ObjectMain
 		end if
 		break
 
+	case 2
+		if object[0].animation == 3		
+			temp4 = 8
+			temp5 = 6
+			temp7 = temp4		
+			temp7 *= temp5		
+			if object.value0 < temp7
+				temp0 = 0
+				temp1 = object[0].xpos
+				temp1 += 0x320000
+				temp2 = object[0].ypos
+				temp2 -= 0x20000		
+				temp6 = 0	
+				while temp0 < temp5
+					if object.value0 == temp6
+						temp3 = temp0
+						temp3 += 4
+						CreateTempObject(TypeName[Lightning Spark], 3, temp1, temp2)
+						object[tempObjectPos].frame = temp3
+						object[tempObjectPos].priority = PRIORITY_ACTIVE
+						object[tempObjectPos].value0 = temp1
+						object[tempObjectPos].value0 -= object[0].xpos
+						object[tempObjectPos].value1 = temp2
+						object[tempObjectPos].value1 -= object[0].ypos
+					end if	
+					temp6 += temp4		
+					temp1 += 0x90000	
+					temp2 += 0x20000										
+					temp0++
+				loop	
+				object.value0++
+			end if
+		end if		
+		break
+
+	case 3	
+		object.drawOrder = 5
+		object.xpos = object[0].xpos
+		object.ypos = object[0].ypos
+		if object[0].direction == FLIP_NONE
+			object.xpos += object.value0	
+			object.ypos += object.value1	
+		else		
+			object.xpos -= object.value0	
+			object.ypos -= object.value1	
+		end if			
+		object.value40 = -12
+		object.value38 = -12
+		object.value41 = 12
+		object.value39 = 12		
+		if object.animationTimer == 10
+			object.animationTimer = 0
+			object.direction ^= 1
+		else
+			object.animationTimer++
+		end if
+		if object[0].animation != 3		
+			object.type = TypeName[Blank Object]
+		end if			
+		break
+
 	case 10
 		switch object.frame
 			case 0
@@ -155,13 +216,24 @@ event ObjectDraw
 	if object.propertyValue == 10
 		DrawRect(0, 0, screen.xsize, screen.ysize, color7, color7, color7, object.alpha)
 	else
-		if object.propertyValue == 1
-			LoadSpriteSheet("Players/Fang3.gif")
+		if object.propertyValue == 3
+			LoadSpriteSheet("Players/DragonTrip2.gif")
+			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
+			object.xpos += object[0].xvel
+			object.ypos += object[0].yvel		
+			LoadSpriteSheet("Global/Items3.gif")			
 		else
+			switch object.propertyValue 
+			case 1
+				LoadSpriteSheet("Players/Fang3.gif")
+				break
+			default	
+				LoadSpriteSheet("Global/Items3.gif")
+				break
+			end switch
+			DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
 			LoadSpriteSheet("Global/Items3.gif")
-		end if
-		DrawSpriteFX(object.frame, FX_FLIP, object.xpos, object.ypos)
-		LoadSpriteSheet("Global/Items3.gif")
+		end if	
 	end if	
 end event
 
@@ -170,9 +242,15 @@ event ObjectStartup
 	LoadSpriteSheet("Global/Items3.gif")
 	SpriteFrame(0, 0, 1, 1, 1, 1)
 	SpriteFrame(-3, -3, 6, 6, 150, 84)
-	SpriteFrame(-8, -8, 16, 16, 157, 84)
-
+	SpriteFrame(-8, -8, 16, 16, 157, 84)	
 	SpriteFrame(-4, -4, 7, 7, 207, 1)	
+
+	SpriteFrame(-4, -8, 9, 16, 1, 172)
+	SpriteFrame(-4, -8, 9, 16, 1, 172)
+	SpriteFrame(-8, -12, 16, 24, 11, 172)
+	SpriteFrame(-8, -12, 16, 24, 11, 172)
+	SpriteFrame(-12, -16, 24, 32, 28, 172)
+	SpriteFrame(-12, -16, 24, 32, 28, 172)
 end event
 
 event RSDKDraw

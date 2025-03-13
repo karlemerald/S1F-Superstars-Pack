@@ -1140,24 +1140,16 @@ function PlayerObject_BadnikBreak
 		CreateTempObject(TypeName[Object Score], object[currentPlayer].value19, object.xpos, object.ypos)
 		object[tempObjectPos].drawOrder = 4
 		PlaySfx(SfxName[Destroy], 0)
-		if stage.playerListPos == 15
-			CheckNotEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
-			temp2 = checkResult
-		else
-			temp2 = 1
-		end if
-		if temp2 == 1
-			if object[currentPlayer].yvel > 0
-				if object[currentPlayer].ypos >= object.ypos
-					object[currentPlayer].yvel -= 0x10000
-				else
-					object[currentPlayer].yvel += object[currentPlayer].value25
-					object[currentPlayer].yvel += object[currentPlayer].value25
-					FlipSign(object[currentPlayer].yvel)
-				end if
+		if object[currentPlayer].yvel > 0
+			if object[currentPlayer].ypos >= object.ypos
+				object[currentPlayer].yvel -= 0x10000
 			else
-				object[currentPlayer].yvel += 0x10000
+				object[currentPlayer].yvel += object[currentPlayer].value25
+				object[currentPlayer].yvel += object[currentPlayer].value25
+				FlipSign(object[currentPlayer].yvel)
 			end if
+		else
+			object[currentPlayer].yvel += 0x10000
 		end if
 		if options.competition == 0
 			temp0 = currentPlayer
@@ -6553,6 +6545,16 @@ function PlayerObject_DragonFly
 		object.gravity = GRAVITY_GROUND
 	end if
 
+	if inputDown.buttonA == 1
+		object.animation = 3
+		if object.value1 == 0
+			CreateTempObject(TypeName[Lightning Spark], 2, object[0].xpos, object[0].ypos)
+			object.value1 = 1
+		end if	
+	else
+		object.value1 = 0
+	end if
+
 	//De-transform
 	if object.animation > 4
 		LoadAnimation("Trip.ani")
@@ -6594,6 +6596,8 @@ end function
 function PlayerObject_DragonIdle
 	if object.gravity == GRAVITY_AIR
 		object.state = PlayerObject_DragonFly
+		object.scrollTracking = 1
+		object.collisionMode = CMODE_FLOOR
 	else
 		if object.pushing == 2
 			object.animation = 2
@@ -6617,12 +6621,12 @@ function PlayerObject_DragonIdle
 			object.value2 = 0
 		end if	
 
+		CallFunction(PlayerObject_ResetOnFloor)
 		CallFunction(PlayerObject_HandleMovement)
 
 		object.yvel = 0
 		object.gravity = GRAVITY_GROUND
 		//object.speed = object.xvel
-
 
 		if player.groundRotation > 132
 			if player.groundRotation < 384
@@ -6640,6 +6644,8 @@ function PlayerObject_DragonIdle
 			object.yvel -= player.airAcceleration
 			object.state = PlayerObject_DragonFly
 			object.gravity = GRAVITY_AIR
+			object.scrollTracking = 1
+			object.collisionMode = CMODE_FLOOR
 		end if
 	end if
 end function
