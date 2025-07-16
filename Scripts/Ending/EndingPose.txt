@@ -308,12 +308,12 @@ event ObjectMain
 			EndBeginningValue++
 			object.state++
 		end if
-		SetClassicFade(color6, color7, color6, object.value0)
+		SetClassicFade(color7, color7, color7, object.value0)
 		break
 	case 9
 		if object.value0 > 0
 			object.value0 -= 16
-			SetClassicFade(color6, color7, color6, object.value0)
+			SetClassicFade(color7, color7, color7, object.value0)
 		else
 			switch stage.playerListPos
 			case 0

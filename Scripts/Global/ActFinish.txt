@@ -299,7 +299,7 @@ event ObjectMain
 	case 8
 		if object[0].type == TypeName[Blank Object]
 			object.value0 += 8			
-			SetClassicFade(color6, color7, color6, object.value0)
+			SetClassicFade(color7, color7, color7, object.value0)
 			if object.value0 == 0x400
 				fadeColor = 208
 				fadeColor <<= 16

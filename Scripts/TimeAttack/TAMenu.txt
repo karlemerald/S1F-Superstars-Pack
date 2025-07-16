@@ -527,11 +527,11 @@ event ObjectDraw
 				LoadPalette("SpecialStage.act",0,0,0,128)
 				fade.control++
 			end if
-			SetClassicFade(color6, color7, color6, fade.effect)
+			SetClassicFade(color7, color7, color7, fade.effect)
 			break
 		case 8
 			StopMusic()
-			SetClassicFade(color6, color7, color6, 255)
+			SetClassicFade(color7, color7, color7, 255)
 		break
 	end switch	
 	
