@@ -741,19 +741,18 @@ function FangPop
 	temp0 = object.xpos
 	temp1 = object.ypos
 	temp1 -= 0x120000
-	DrawSpriteXY(60, temp0, temp1)
+	DrawSpriteXY(229, temp0, temp1)
 	if pop.frame > 6
 		CallFunction(FangIdle)
 	else
 		temp2 = pop.frame
 		temp2 += 217
 		DrawSpriteXY(temp2, temp0, temp1)
-
+			slot.handframe = 20
 		pop.timer++
 		switch pop.frame 
 		case 3
 			temp0 = 8
-			slot.handframe = 20
 			break
 		case 6
 			temp0 = 15
@@ -773,7 +772,7 @@ function FangIdle
 	temp0 = object.xpos
 	temp1 = object.ypos
 	temp1 -= 0x120000	
-	DrawSpriteXY(60, temp0, temp1)
+	DrawSpriteXY(229, temp0, temp1)
 
 	if slot.handframe < 16
 		DrawSpriteXY(222, temp0, temp1)
@@ -810,7 +809,7 @@ function TripPop
 	temp0 = object.xpos
 	temp1 = object.ypos
 	temp1 -= 0x120000
-	DrawSpriteXY(60, temp0, temp1)
+	DrawSpriteXY(228, temp0, temp1)
 	if pop.frame > 6
 		CallFunction(TripIdle)
 	else
@@ -829,7 +828,7 @@ function TripIdle
 	temp0 = object.xpos
 	temp1 = object.ypos
 	temp1 -= 0x120000
-	DrawSpriteXY(60, temp0, temp1)
+	DrawSpriteXY(228, temp0, temp1)
 	DrawSpriteXY(206, temp0, temp1)
 	
 	if save.highlight == object.propertyValue
@@ -1714,6 +1713,9 @@ event ObjectStartup
 
 	SpriteFrame(-16, -2, 16, 14, 616, 64)  //226 Fang Life
 	SpriteFrame(-20, -3, 24, 25, 633, 64) //227 Fang Continue
+
+	SpriteFrame(-34, -30, 68, 30, 359, 305) //228 trip frame
+	SpriteFrame(-34, -30, 68, 30, 454, 362) //229 fang frame
 
 	screen.cameraEnabled = 0
 	temp0 = 0

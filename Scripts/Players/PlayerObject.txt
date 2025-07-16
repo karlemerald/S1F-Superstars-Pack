@@ -5571,12 +5571,14 @@ function PlayerObject_StartTripMove
 			if PlayerObject_SuperState == 1
 				PlaySfx(SfxName[Transform], false)
 				
-				if DragonState == 0
-					LoadAnimation("DragonTrip.ani")
-					object.animation = 1
-					DragonState = 1
-					object.value2 = 0
-					CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)
+				if object.state != PlayerObject_Transforming
+					if DragonState == 0
+						LoadAnimation("DragonTrip.ani")
+						object.animation = 1
+						DragonState = 1
+						object.value2 = 0
+						CreateTempObject(TypeName[Lightning Spark], 10, 0, 0)
+					end if	
 				end if	
 			end if
 		end if
@@ -5981,7 +5983,7 @@ function PlayerObject_FangTrips
 		object.xvel = 0
 		object.speed = 0
 		object.value1++
-		if object.value1 > 30
+		if object.value1 > 50
 			object.value1 = 0
 			object.frame++
 		end if		
@@ -5993,7 +5995,7 @@ function PlayerObject_FangTrips
 			object.speed = 0x2000
 		end if		
 		break		
-	end switch	
+	end switch
 end function
 
 
@@ -6053,10 +6055,12 @@ function PlayerObject_HandleCorkShoot
 	FangCoolDown = 20
 	object[tempObjectPos].frame = 0		
 	if object.direction == FLIP_NONE
-		object[tempObjectPos].xvel = 0xA0000
+		object[tempObjectPos].xvel = 0x70000
+		object[tempObjectPos].xvel += object.xvel
 		object[tempObjectPos].yvel = 0
 	else
-		object[tempObjectPos].xvel = -0xA0000
+		object[tempObjectPos].xvel = -0x70000
+		object[tempObjectPos].xvel += object.xvel
 		object[tempObjectPos].yvel = 0											
 	end if
 	
@@ -6275,8 +6279,8 @@ function PlayerObject_HandleRabbitGrab
 	case 0
 	case 1
 		if object.gravity == GRAVITY_GROUND
+			CallFunction(PlayerObject_ResetOnFloor)
 			object.animation = 50
-
 			//Slow Down
 			temp0 = 0x2500
 			if object.direction == FLIP_X
@@ -6293,9 +6297,11 @@ function PlayerObject_HandleRabbitGrab
 				end if
 			end if		
 		else
-			object.animation = 51		
+			if object.yvel >= 0
+				object.animation = 51
+			end if		
 			//Gravity & Apples		
-			object.yvel += player.gravityValue	
+			object.yvel += player.gravityValue		
 		end if	
 		if inputDown.buttonB == 0
 			object[arrayPos0].state = 2	
@@ -6304,14 +6310,15 @@ function PlayerObject_HandleRabbitGrab
 	case 2
 		//come back regular player controls
 		if object[arrayPos0].value0 < 20
-			object.state = PlayerObject_HandleAir
 			if object.gravity == GRAVITY_GROUND
 				object.animation = ANI_STOPPED
+				object.state = PlayerObject_HandleGround
 			else	
 				object.animation = ANI_JUMPING
+				object.state = PlayerObject_HandleAir
+				CallFunction(PlayerObject_HandleAirMovement)
 			end if	
 			object.value1 = 0
-			CallFunction(PlayerObject_HandleAirMovement)
 		end if
 		break
 	case 3 //kill
@@ -6807,29 +6814,24 @@ event ObjectMain
 		CallFunction(object.state)
 		ProcessAnimation()
 		if object.entityPos == screen.cameraTarget
-			switch stage.playerListPos 
-			case 13
+			if stage.playerListPos == 13
 				if object.animation == ANI_GLIDING
 					screen.adjustCameraY = player.jumpOffset
 				else
 					if object.animation == ANI_JUMPING
-						if DragonState == 1
+						screen.adjustCameraY = player.jumpOffset
+					else
+						if object.animation == ANI_GLIDING_STOP
+							screen.adjustCameraY = player.jumpOffset
+						else
 							if screen.adjustCameraY == player.jumpOffset
 								screen.adjustCameraY = 0
 								object.iypos += player.jumpOffset
 							end if
-						else
-							screen.adjustCameraY = player.jumpOffset
 						end if	
-					else
-						if screen.adjustCameraY == player.jumpOffset
-							screen.adjustCameraY = 0
-							object.iypos += player.jumpOffset
-						end if
 					end if	
 				end if
-				break			
-			default	
+			else
 				if object.animation == ANI_JUMPING
 					screen.adjustCameraY = player.jumpOffset
 				else
@@ -6837,9 +6839,8 @@ event ObjectMain
 						screen.adjustCameraY = 0
 						object.iypos += player.jumpOffset
 					end if
-				end if
-				break
-			end switch
+				end if				
+			end if				
 		end if
 		if player.collisionEnabled == 0
 			temp0 = player.prevGravity
@@ -7306,6 +7307,13 @@ event ObjectStartup
 	SpriteFrame(-16, -16, 32, 32, 100, 180) //5
 	SpriteFrame(-16, -16, 32, 32, 1, 213) //6
 	SpriteFrame(-16, -16, 32, 32, 133, 180) //7
+
+	if saveRAM[8090] == 0 // Somehow you didn't put in his name...
+		saveRAM[8090] = 13
+		saveRAM[8091] = 1
+		saveRAM[8092] = 24
+		WriteSaveRAM()
+	end if
 end event
 
 event RSDKDraw

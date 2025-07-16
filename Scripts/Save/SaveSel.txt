@@ -257,7 +257,7 @@ function save_fadein
 	if fade.alpha == 0
 		fade.alpha = 384
 	end if
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	fade.alpha -= 16
 	if fade.alpha <= 0
 		PlayMusic(1)
@@ -408,7 +408,7 @@ end function
 function save_loadsave
 	fade.alpha += 16
 	music.volume -= 2
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		options.gameMode = 1
@@ -442,7 +442,7 @@ end function
 function save_loadspecial
 	fade.alpha += 8
 	music.volume -= 2
-	SetScreenFade(color5, color7, color5, fade.alpha)
+	SetClassicFade(color5, color7, color5, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		options.gameMode = 1
@@ -481,7 +481,7 @@ end function
 function save_loadcomplete
 	fade.alpha += 16
 	music.volume -= 2
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		options.gameMode = 1
@@ -515,7 +515,7 @@ end function
 function save_loadnew
 	fade.alpha += 16
 	music.volume -= 2
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		options.gameMode = 1
@@ -597,7 +597,7 @@ end function
 function save_exit
 	fade.alpha += 16
 	music.volume -= 2
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		stage.activeList = PRESENTATION_STAGE
@@ -663,7 +663,7 @@ end function
 function nosave_load
 	fade.alpha += 16
 	music.volume -= 2
-	SetScreenFade(0, 0, 0, fade.alpha)
+	SetClassicFade(0, 0, 0, fade.alpha)
 	if fade.alpha >= 384
 		StopMusic()
 		options.gameMode = 0

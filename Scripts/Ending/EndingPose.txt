@@ -186,7 +186,7 @@ event ObjectMain
 		else
 			temp0 = 0
 		end if
-		SetScreenFade(0, 0, 0, temp0)
+		SetClassicFade(0, 0, 0, temp0)
 		break
 	case 5
 		object.value0++
@@ -308,12 +308,12 @@ event ObjectMain
 			EndBeginningValue++
 			object.state++
 		end if
-		SetScreenFade(color6, color7, color6, object.value0)
+		SetClassicFade(color6, color7, color6, object.value0)
 		break
 	case 9
 		if object.value0 > 0
 			object.value0 -= 16
-			SetScreenFade(color6, color7, color6, object.value0)
+			SetClassicFade(color6, color7, color6, object.value0)
 		else
 			switch stage.playerListPos
 			case 0
@@ -594,10 +594,10 @@ event ObjectStartup
 	SpriteFrame(-17, -23, 31, 42, 59, 523) //74 Rabbit 3
 	SpriteFrame(-21, -24, 33, 43, 1, 566) //75 Rabbit 4
 	SpriteFrame(-18, -24, 36, 43, 35, 566) //76 Rabbit 5
-	SpriteFrame(-13, -15, 27, 34, 5, 399) //77 Rabbit 6
+	SpriteFrame(-15, -15, 29, 34, 3, 399) //77 Rabbit 6
 
-	SpriteFrame(-22, -35, 70, 88, 23, 434) // 78 Rabbit Mid
-	SpriteFrame(-43, -86, 126, 172, 94, 434) // 79 Rabbit Awesome		
+	SpriteFrame(-20, -48, 60, 96, 91, 434) // 78 Rabbit Mid
+	SpriteFrame(-35, -82, 116, 176, 91, 531) // 79 Rabbit Awesome		
 end event
 
 event RSDKDraw

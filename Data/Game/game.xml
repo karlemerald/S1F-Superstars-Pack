@@ -14,6 +14,7 @@
     <color bank="0" index="90" r="224" g="96" b="0" />
     <color bank="0" index="91" r="160" g="64" b="0" />
     <color bank="0" index="92" r="96" g="32" b="0" />
+    <color bank="0" index="95" r="224" g="192" b="64" />
   </palette>
   <objects>
     <object name="Ears" script="Global/Ears.txt" forceLoad="true" />
@@ -27,7 +28,7 @@
     <variable name="ANI_GUN_IDLE" value="58" />
     <variable name="fangGunEnabled" value="0" />
     <variable name="fangGunTimer" value="0" />
-    <variable name="FangCooldown" value="0" />    
+    <variable name="FangCooldown" value="0" />
   </variables>
   <sounds>
     <soundfx name="TripJump" path="TripDoubleJump.ogg" />

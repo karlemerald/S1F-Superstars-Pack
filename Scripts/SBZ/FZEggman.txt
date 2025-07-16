@@ -339,6 +339,15 @@ event ObjectMain
 				end if
 			end if
 		next
+		foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -33, -37, 33, 6, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				arrayPos1 = arrayPos0
+				arrayPos1--
+				object[arrayPos1].state = 2
+				inputDown.buttonB = 0
+			end if
+		next
 	end if
 	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
 		temp0 = object[currentPlayer].collisionRight

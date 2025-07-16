@@ -206,11 +206,21 @@ event ObjectMain
 				if object[currentPlayer].value18 == 0
 					currentPlayer -= playerCount
 					arrayPos0 = object[currentPlayer].value18
+			
 					AddDrawListEntityRef(arrayPos0, currentPlayer)
+					if stage.playerListPos == PlayerName[RABBIT]
+						currentPlayer += playerCount
+						currentPlayer += playerCount
+						AddDrawListEntityRef(arrayPos0, currentPlayer)
+						currentPlayer -= playerCount
+						currentPlayer -= playerCount
+					end if								
 					currentPlayer += playerCount
 					AddDrawListEntityRef(arrayPos0, currentPlayer)
-					currentPlayer += playerCount
-					AddDrawListEntityRef(arrayPos0, currentPlayer)
+						currentPlayer += playerCount
+					if stage.playerListPos != PlayerName[RABBIT]
+						AddDrawListEntityRef(arrayPos0, currentPlayer)
+					end if	
 					currentPlayer -= playerCount
 					currentPlayer -= playerCount
 				else
@@ -219,11 +229,20 @@ event ObjectMain
 					currentPlayer += playerCount
 					AddDrawListEntityRef(arrayPos0, currentPlayer)
 					currentPlayer += playerCount
-					AddDrawListEntityRef(arrayPos0, currentPlayer)
+					if stage.playerListPos != PlayerName[RABBIT]
+						AddDrawListEntityRef(arrayPos0, currentPlayer)
+					end if	
 					currentPlayer -= playerCount
 					currentPlayer -= playerCount
 					arrayPos0 = object[currentPlayer].value18
 					AddDrawListEntityRef(arrayPos0, currentPlayer)
+					if stage.playerListPos == PlayerName[RABBIT]
+						currentPlayer += playerCount
+						currentPlayer += playerCount
+						AddDrawListEntityRef(arrayPos0, currentPlayer)
+						currentPlayer -= playerCount
+						currentPlayer -= playerCount
+					end if				
 				end if
 			end if
 			currentPlayer--

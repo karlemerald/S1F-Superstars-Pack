@@ -44,7 +44,7 @@ event ObjectMain
 			else
 				object.size = 60					
 				object.state++
-			end if	
+			end if		
 			break
 		case 1	
 			object.timer++
@@ -59,11 +59,6 @@ event ObjectMain
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]
 				object.size	= 0
-				if object[0].gravity == GRAVITY_GROUND
-					object[0].animation = ANI_STOPPED
-				else	
-					object[0].animation = ANI_JUMPING
-				end if	
 			end if				
 			break	
 		case 3	
@@ -73,7 +68,7 @@ event ObjectMain
 		object.hitboxTop = 0
 		object.hitboxBottom = 0
 		object.hitboxLeft = 0
-		object.hitboxRight = 0
+		object.hitboxRight = 0		
 		break
 	case 1 // Ear Vertical
 
@@ -105,11 +100,6 @@ event ObjectMain
 			else		
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]
-				if object[0].gravity == GRAVITY_GROUND
-					object[0].animation = ANI_STOPPED
-				else	
-					object[0].animation = ANI_JUMPING
-				end if
 			end if				
 			break	
 		case 3	
@@ -146,11 +136,6 @@ event ObjectMain
 			else		
 				object.type = TypeName[Blank Object]
 				object[+1].type = TypeName[Blank Object]
-				if object[0].gravity == GRAVITY_GROUND
-					object[0].animation = ANI_STOPPED
-				else	
-					object[0].animation = ANI_JUMPING
-				end if
 			end if				
 			break	
 		case 3	
@@ -188,7 +173,7 @@ event ObjectMain
 
 				object.ypos = object[0].ypos			
 				object.ypos -= 0x70000	
-				if object[0].gravity != GRAVITY_GROUND
+				if object[0].animation == 51
 					object.ypos -= 0x70000
 				end if	
 			end if	
@@ -208,7 +193,7 @@ event ObjectMain
 
 				object.xpos = object[0].xpos			
 
-				if object[0].gravity == GRAVITY_AIR
+				if object[0].animation == 51
 					object.ypos -= 0x70000
 				end if	
 			end if	
@@ -235,7 +220,7 @@ event ObjectMain
 				end if					
 				object.xpos += temp1		
 
-				if object[0].gravity == GRAVITY_AIR
+				if object[0].animation == 51
 					object.ypos -= 0x70000
 				end if	
 			end if	
@@ -246,8 +231,10 @@ event ObjectMain
 			object[-1].state = 3
 			object[-1].enemyEntity = object.enemyEntity		
 			if object.timer == 0
-				object[0].animation = 49
-				object[0].frame = EarControl		
+				if object.state != PlayerObject_Knockback
+					object[0].animation = 49
+					object[0].frame = EarControl		
+				end if	
 				PlaySfx(SfxName[Catch], 0)
 				object.timer++	
 			end if					
@@ -255,24 +242,15 @@ event ObjectMain
 		break	
 	end switch	
 
+
 	if object[0].state != PlayerObject_HandleRabbitGrab
 		object.type = TypeName[Blank Object]
-		//single frame delay soooo
-		if object.state == 2
-			if object[0].gravity == GRAVITY_GROUND
-				object[0].animation = ANI_STOPPED
-			else	
-				object[0].animation = ANI_JUMPING
-			end if	
-		end if	
 	end if
 end event
 
 
 event ObjectDraw
 	if object[0].visible == 1
-		object.drawOrder = object[0].value18
-
 		switch object.propertyvalue
 		case 0
 			object.ypos = object[0].ypos

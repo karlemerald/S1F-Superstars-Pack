@@ -1110,17 +1110,6 @@ function datamang.menu
 	object.curMenu = 6
 	if object.nameMenu == 1
 	
-		if arrayPos1 == 0
-			arrayPos1 = 8099
-			temp0 = 0
-			while temp0 < 10
-				if saveRAM[arrayPos1] == 0
-					arrayPos1--
-				end if
-				temp0++
-			loop
-		end if	
-		
 		object.lineX = arrayPos1
 		
 		if inputPress.buttonB == 1
@@ -1172,7 +1161,9 @@ function datamang.menu
 			end if
 		end if	
 	
-		if inputPress.buttonA == 1
+		temp7 = inputPress.buttonA
+		temp7 |= inputPress.Start
+		if temp7 == 1
 			temp0 = column.highlight
 			temp1 = 0
 			while temp1 < row.highlight
@@ -1182,13 +1173,29 @@ function datamang.menu
 			switch temp0 
 			case 29
 				PlaySfx(SfxName[Score Add], 0)
-				saveRAM[arrayPos1] = 0
-				if arrayPos1 > 8090
-					arrayPos1--	
-				end if	
+				if arrayPos1 == 8099
+					if saveRAM[arrayPos1] == 0
+						arrayPos1--					
+					end if	
+					saveRAM[arrayPos1] = 0	
+				else
+					if arrayPos1 > 8090
+						if saveRAM[arrayPos1] == 0
+							arrayPos1--	
+						end if	
+					end if	
+					saveRAM[arrayPos1] = 0					
+				end if		
 				break
 			case 30				
 				PlaySfx(SfxName[Lamp Post], 0)
+
+				if saveRAM[8090] == 0 // Somehow you didn't put in his name...
+					saveRAM[8090] = 13
+					saveRAM[8091] = 1
+					saveRAM[8092] = 24
+				end if
+
 				WriteSaveRAM()
 				object.nameMenu = 0
 				break		
@@ -1268,9 +1275,19 @@ function datamang.menu
 				end if
 				break
 			case 1 // Rabbit Nmae
-				if inputPress.start == 1
+				temp0 = inputPress.buttonA
+				temp0 |= inputPress.Start
+				if temp0 == 1
 					object.nameMenu = 1
-					arrayPos1 = 0
+					arrayPos1 = 8100
+					temp0 = 0
+					while temp0 < 10
+						if saveRAM[arrayPos1] == 0
+							arrayPos1--
+						end if
+						temp0++
+					loop
+					arrayPos1++
 					PlaySfx(SfxName[Lamp Post], 0)
 				end if
 				break
@@ -1556,6 +1573,7 @@ event ObjectMain
 							if object.state == datamang.menu
 								object.drawState = datamang.draw
 							end if
+						end if	
 					end if
 				end if
 			end if
@@ -1807,16 +1825,12 @@ end function
 function datamang.draw
 
 	//Change Rabbit Name
-	text.xpos = text.margin
-	text.drawalign = TEXT_LEFT_ALIGN
+	text.xpos >>= 1
+	text.xpos += screen.xcenter
+	text.drawalign = TEXT_CENTER_ALIGN
 	text.drawline = 181
 	CallFunction(option.text)
-	
-	text.xpos = screen.xsize
-	text.xpos -= text.margin.right
-	text.drawalign = TEXT_CENTER_ALIGN
-	text.drawline = 182
-	CallFunction(option.text)
+
 	text.ypos += 21
 	menu.line++
 
@@ -3213,6 +3227,42 @@ function visuals.draw
 
 	//rabbit
 	text.xpos = text.margin
+	arrayPos0 = 8090	
+
+	if menu.line == menu.highlight
+		object.inkEffect = INK_NONE
+	else
+		object.inkEffect = INK_BLEND
+	end if
+
+	temp0 = 0
+	while temp0 < 17
+		switch saveRAM[arrayPos0] 
+		default
+			if saveRAM[arrayPos0] > 0
+				GetTableValue(temp1, saveRAM[arrayPos0], charspaceAlt)
+				temp2 = 207				
+				temp2 += saveRAM[arrayPos0]
+				DrawSpriteScreenFX(temp2, FX_INK, text.xpos, text.ypos)
+				text.xpos += temp1
+			end if
+			break
+		case 27
+			text.xpos += 6
+			break
+		case 28
+			DrawSpriteScreenFX(189, FX_INK, text.xpos, text.ypos)
+			text.xpos += 3
+			break
+		case 29
+			DrawSpriteScreenFX(188, FX_INK, text.xpos, text.ypos)
+			text.xpos += 7
+			break					
+		end switch
+		temp0++
+		arrayPos0++
+	loop	
+
 	text.drawalign = TEXT_LEFT_ALIGN
 	text.drawline = 185
 	CallFunction(option.text)
@@ -3463,18 +3513,34 @@ event ObjectDraw
 		temp1 = screen.xsize
 		temp1 -= 110
 		DrawRect(temp0, temp2, screen.xsize, 19, color5, color5, color7, 255)
-		DrawRect(temp1, temp2, 110, 17, color6, color6, color6, 255) // light grey part
 
-	//Delete Highlight
-	if delete.check == 1
-		if inputDown.buttonA == 1
-			DrawRect(temp1, temp2, delete.ticker, 17, color7, 0, 0, 255) // RED
+		CheckEqual(object.drawState, datamang.draw)
+		temp7 = checkResult
+		CheckEqual(menu.highlight, 1)
+		temp7 &= checkResult
+		if temp7 == 0
+			DrawRect(temp1, temp2, 110, 17, color6, color6, color6, 255) // light grey part
 		end if
-	end if
-	//Delete Highlight Ended
+
+		//Delete Highlight
+		if delete.check == 1
+			if inputDown.buttonA == 1
+				DrawRect(temp1, temp2, delete.ticker, 17, color7, 0, 0, 255) // RED
+			end if
+		end if
+		//Delete Highlight Ended
 
 		temp1 -= text.margin
-		temp1 ++
+		temp1++	
+
+		CheckEqual(object.drawState, datamang.draw)
+		temp7 = checkResult
+		CheckEqual(menu.highlight, 1)
+		temp7 &= checkResult
+		if temp7 == 1
+			temp1 = screen.xsize
+		end if		
+
 		DrawRect(temp0, temp2, temp1, 17, color1, color1, color1, 255)
 		temp2++
 		temp0--
@@ -3593,12 +3659,26 @@ event ObjectDraw
 			end if
 			if saveram[arrayPos0] == 29
 				temp2 = 7
-			end if			
+			end if					
 			temp3 += temp2
+
 			arrayPos0++
 			temp0++
 		loop
-		
+
+		if object.lineX == 8099
+			if saveRAM[8099] != 0
+				GetTableValue(temp2, SaveRAM[8099], charspaceAlt)
+				if saveram[8099] == 28
+					temp2 = 3
+				end if
+				if saveram[8099] == 29
+					temp2 = 7
+				end if					
+				temp3 += temp2
+			end if	
+		end if	
+
 		DrawRect(temp3, 75, 7, 1, color5, color5, color5, 256)
 
 		temp0 = 0
@@ -3607,9 +3687,33 @@ event ObjectDraw
 		temp3 = screen.xcenter
 		temp3 -= 81
 		temp4 = 90
-		while temp0 < 3
-			while temp1 < 8
-				DrawSpriteScreenXY(temp2, temp3, temp4)
+		while temp0 < 4
+			if temp0 == 3
+				temp5 = 7
+			else
+				temp5 = 8
+			end if
+			while temp1 < temp5
+
+				temp6 = column.highlight
+				temp7 = 0
+				while temp7 < row.highlight
+					temp6 += 8
+					temp7++
+				loop
+
+				arrayPos6 = temp1
+				arrayPos7 = 0
+				while arrayPos7 < temp0
+					arrayPos6 += 8
+					arrayPos7++
+				loop
+
+				if arrayPos6 == temp6
+					CopyPalette(0, 211, 0, 6, 1)
+				end if	
+				DrawSpriteScreenXY(temp2, temp3, temp4)	
+				CopyPalette(0, 245, 0, 6, 1)	
 				temp1++
 				temp2++
 				temp3 += 22
@@ -3620,19 +3724,7 @@ event ObjectDraw
 			temp4 += 15
 			temp0++
 		loop
-		DrawSpriteScreenXY(333, temp3, temp4)
-		temp3 += 22
-		DrawSpriteScreenXY(334, temp3, temp4)
-		temp3 += 22	
-		DrawSpriteScreenXY(335, temp3, temp4)
-		temp3 += 22
-		DrawSpriteScreenXY(336, temp3, temp4)
-		temp3 += 22	
-		DrawSpriteScreenXY(337, temp3, temp4)
-		temp3 += 22	
-		DrawSpriteScreenXY(338, temp3, temp4)	
-		temp3 += 22	
-		DrawSpriteScreenXY(339, temp3, temp4)
+
 
 		temp3 = screen.xcenter
 		temp3 -= 74
@@ -3668,7 +3760,7 @@ event ObjectDraw
 			temp2++
 		loop
 
-		DrawSpriteScreenXY(351, temp0, temp1)		
+		//DrawSpriteScreenXY(351, temp0, temp1)		
 		
 		temp0 = column.highlight
 		temp1 = 0
@@ -3676,7 +3768,7 @@ event ObjectDraw
 			temp0 += 7
 			temp1++
 		loop
-		DrawNumbers(340, 20, 20, temp0, 2, 8, 2)
+		//DrawNumbers(340, 20, 20, temp0, 2, 8, 2)
 	end if
 end event
 
@@ -3882,4 +3974,11 @@ event ObjectStartup
 
 	SpriteFrame(0, 0, 94, 6, 821, 396) //350
 	SpriteFrame(-8, 0, 7, 5, 80, 9) //351
+
+	if saveRAM[8090] == 0 // Somehow you didn't put in his name...
+		saveRAM[8090] = 13
+		saveRAM[8091] = 1
+		saveRAM[8092] = 24
+		WriteSaveRAM()
+	end if
 end event
