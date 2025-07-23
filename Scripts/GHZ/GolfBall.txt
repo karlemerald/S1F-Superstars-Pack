@@ -63,7 +63,8 @@ public table Golf_Numbers
 		0, 0, 0		
 		0, 0, 0		
 		20,			2,		5	//Trip	
-		24,			1,		2	//Rabbit		
+		24,			1,		2	//Rabbit	
+		22,			1,		0	//Fang			
 end table
 
 event ObjectMain	
@@ -813,7 +814,7 @@ event ObjectStartup
 					SpriteFrame(-21, -35, 31, 39, 237, 211) //13 Rabbit shot 3
 					break
 				case 13
-					//Rabbit
+					//Trip
 					SpriteFrame(-15, -30, 18, 17, 436, 24) //5 trip blink
 					SpriteFrame(-15, -30, 18, 17, 436, 42) //6 trip look
 					
@@ -824,7 +825,22 @@ event ObjectStartup
 					SpriteFrame(-16, -29, 30, 34, 342, 26) //11 trip shot 1
 					SpriteFrame(-16, -35, 27, 40, 373, 20) //12 trip shot 2
 					SpriteFrame(-16, -31, 34, 36, 401, 24) //13 trip shot 3
-					break					
+					break	
+				case 15
+					//Fang
+					SpriteFrame(-8, -27, 10, 4, 256, 105) //5 Fang blink
+					SpriteFrame(-8, -27, 10, 4, 256, 110) //6 Fang look
+					
+					SpriteFrame(-17, -39, 28, 43, 256, 61) //7 Fang mid
+
+					SpriteFrame(-26, -39, 38, 43, 285, 61) //8 Fang prep 1
+					SpriteFrame(-23, -39, 37, 43, 324, 61) //9 Fang prep 2
+					SpriteFrame(-15, -39, 35, 43, 362, 61) //10 Fang prep 3
+
+					SpriteFrame(-14, -39, 38, 43, 398, 61) //11 Fang shot 1
+					SpriteFrame(-17, -39, 37, 43, 437, 61) //12 Fang shot 2
+					SpriteFrame(-19, -39, 35, 43, 475, 61) //13 Fang shot 3
+					break									
 			end switch
 			
 			//Setup player numbers
