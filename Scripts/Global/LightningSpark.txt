@@ -126,7 +126,8 @@ event ObjectMain
 			temp4 = 8
 			temp5 = 6
 			temp7 = temp4		
-			temp7 *= temp5		
+			temp7 *= temp5	
+			temp7 -= 3	
 			if object.value0 < temp7
 				temp0 = 0
 				temp1 = object[0].xpos
@@ -153,7 +154,10 @@ event ObjectMain
 				loop	
 				object.value0++
 			end if
-		end if		
+		end if
+		if object[0].animation != 3		
+			object.type = TypeName[Blank Object]
+		end if						
 		break
 
 	case 3	

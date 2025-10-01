@@ -892,7 +892,7 @@ event ObjectStartup
 
 	SpriteFrame(20, 1, 16, 15, 502, 109) //156 Trip Silhouette
 	SpriteFrame(-50, 0, 101, 30, 544, 195) //157 Trip English	
-	SpriteFrame(-72, 0, 144, 14, 607, 142) //158 Trip Japanese Name
+	SpriteFrame(-78, 0, 156, 14, 607, 142) //158 Trip Japanese Name
 
 	SpriteFrame(19, 0, 18, 16, 519, 108) //159 fang Silhouette
 	switch saved.FangName
@@ -910,7 +910,7 @@ event ObjectStartup
 		SpriteFrame(-41, 0, 82, 29, 734, 226) //160 fang English	
 		break
 	end switch		
-	SpriteFrame(-72, 0, 144, 14, 607, 142) //161 fang Japanese Name
+	SpriteFrame(-55, 2, 109, 11, 764, 145) //161 fang Japanese Name
 	
 	SetMusicTrack("TimeAttack.ogg", 1, 17556)
 	//SetMusicTrack("StartingTheShow.ogg", 1, 92561)

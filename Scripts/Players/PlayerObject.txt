@@ -246,6 +246,7 @@ public value EarControl = 0;
 public value EarButtonCheck = 0;
 public value EarXvelCancel = 0;
 public value DragonState = 0;
+private value FireBreath = 0;
 
 // Tables
 public table PlayerObject_SonicSuperPal
@@ -6425,6 +6426,26 @@ end function
 
 function PlayerObject_DragonFly
 	object.animation = 1	
+	FireBreath = false
+
+	if object.jumpHold == 1
+		object.animation = 3
+		FireBreath = true
+		if object.value1 == 0
+			CreateTempObject(TypeName[Lightning Spark], 2, object[0].xpos, object[0].ypos)
+			object.value1 = 1
+		end if	
+	else
+		object.value1 = 0
+	end if
+
+	temp7 = player.speedCap
+
+	if FireBreath == true
+		player.speedCap /= 2
+	else
+		player.speedCap = temp7
+	end if
 
 	if object.up == 1
 		temp0 = player.speedCap
@@ -6435,6 +6456,8 @@ function PlayerObject_DragonFly
 			if object.yvel > 0
 				object.yvel -= player.airAcceleration
 			end if
+		else
+			object.yvel += player.airAcceleration	
 		end if
 	else 
 		if object.down == 1
@@ -6444,7 +6467,9 @@ function PlayerObject_DragonFly
 				if object.yvel < 0
 					object.yvel += player.airAcceleration
 				end if
-			end if
+			else
+				object.yvel -= player.airAcceleration	
+			end if	
 		else		
 			if object.yvel < 0
 				object.yvel += player.deceleration
@@ -6494,9 +6519,12 @@ function PlayerObject_DragonFly
 			if object.xvel > 0
 				object.xvel -= player.airAcceleration
 			end if
+		else
+			object.xvel += player.airAcceleration	
 		end if
-
-		object.direction = FLIP_X
+		if FireBreath == false
+			object.direction = FLIP_X
+		end if	
 	else 
 		if object.right == 1
 			if object.xvel < player.speedCap
@@ -6505,8 +6533,12 @@ function PlayerObject_DragonFly
 				if object.xvel < 0
 					object.xvel += player.airAcceleration
 				end if
-			end if
-			object.direction = FLIP_NONE
+			else
+				object.xvel -= player.airAcceleration	
+			end if				
+			if FireBreath == false
+				object.direction = FLIP_NONE
+			end if	
 		else 
 			if object.xvel < 0
 				object.xvel += player.deceleration
@@ -6523,6 +6555,8 @@ function PlayerObject_DragonFly
 			end if
 		end if	
 	end if
+
+	player.speedCap = temp7
 
 	temp0 = object.xvel
 	temp1 = player.speedCap
@@ -6551,16 +6585,6 @@ function PlayerObject_DragonFly
 		CallFunction(PlayerObject_ResetOnFloor)
 		object.state = PlayerObject_DragonIdle
 		object.gravity = GRAVITY_GROUND
-	end if
-
-	if inputDown.buttonA == 1
-		object.animation = 3
-		if object.value1 == 0
-			CreateTempObject(TypeName[Lightning Spark], 2, object[0].xpos, object[0].ypos)
-			object.value1 = 1
-		end if	
-	else
-		object.value1 = 0
 	end if
 
 	//De-transform

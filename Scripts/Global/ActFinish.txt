@@ -301,7 +301,7 @@ event ObjectMain
 			object.value0 += 8			
 			SetClassicFade(color7, color7, color7, object.value0)
 			if object.value0 == 0x400
-				fadeColor = 208
+				fadeColor = color7
 				fadeColor <<= 16
 				temp0 = 255
 				temp0 <<= 8
