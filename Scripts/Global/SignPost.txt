@@ -108,20 +108,23 @@ event ObjectMain
 				end if
 				if stage.playerListPos == 15
 					rand(temp2, 100)
+					//temp2 = 50
 					if temp2 >= 50
 						if temp2 <= 55
 							if object[0].gravity == GRAVITY_GROUND
-								object[0].state = PlayerObject_FangTrips
-								if object[0].value0 >= 50
-									object[0].yvel = -0x60000	
-								else
-									object[0].yvel = -0x40000								
-								end if
-								object[0].speed = 0
-								object[0].xvel = 0x30000
-								object[0].value1 = 0
-								object[0].gravity = GRAVITY_AIR
-								object[0].animation = 22
+								if object[0].state != PlayerObject_FangTrips
+									object[0].state = PlayerObject_FangTrips
+									if object[0].value0 >= 50
+										object[0].yvel = -0x60000	
+									else
+										object[0].yvel = -0x40000								
+									end if
+									object[0].speed = 0
+									object[0].xvel = 0x30000
+									object[0].value1 = 0
+									object[0].gravity = GRAVITY_AIR
+									object[0].animation = 22
+								end if	
 							end if	
 						end if	
 					end if	

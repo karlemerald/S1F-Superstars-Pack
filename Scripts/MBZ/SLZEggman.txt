@@ -9,9 +9,9 @@
 private alias 58 : TYPE_EGGMAN
 
 // Function declarations
-reserve function Eggman_Function132
-reserve function Eggman_Function133
-reserve function Eggman_Function134
+reserve function EggmanSLZ_Function132
+reserve function EggmanSLZ_Function133
+reserve function EggmanSLZ_Function134
 
 // Static Values
 
@@ -25,7 +25,7 @@ public table Eggman_table31
 end table
 
 
-function Eggman_Function132
+function EggmanSLZ_Function132
 	object.value7--
 	if object.value7 == 0
 		player.score += 1000
@@ -48,7 +48,7 @@ function Eggman_Function132
 end function
 
 
-function Eggman_Function133
+function EggmanSLZ_Function133
 	arrayPos0 = object.entityPos
 	temp1 = object.value9
 	temp1 >>= 1
@@ -74,7 +74,7 @@ function Eggman_Function133
 end function
 
 
-function Eggman_Function134
+function EggmanSLZ_Function134
 	Sin256(temp0, object.value2)
 	temp0 <<= 10
 	object.ypos += temp0
@@ -96,8 +96,6 @@ event ObjectMain
 			if screen.yoffset == object.value12
 				object.state++
 				object.priority = PRIORITY_ACTIVE
-				ResetObjectEntity(26, TypeName[Music Event], 0, 0, 0)
-				object[26].priority = PRIORITY_ACTIVE
 			else
 				object.value12 = screen.yoffset
 			end if
@@ -117,7 +115,7 @@ event ObjectMain
 			object.xvel = temp1
 		end if
 		object.ypos = object.value1
-		CallFunction(Eggman_Function134)
+		CallFunction(EggmanSLZ_Function134)
 		break
 	case 2
 		object.xpos += object.xvel
@@ -126,10 +124,10 @@ event ObjectMain
 				object.xpos = object.value10
 				FlipSign(object.xvel)
 				object.direction ^= FLIP_X
-			else
+			else			
 				GetTableValue(temp0, object.value9, Eggman_table31)
 				if object.xpos <= temp0
-					CallFunction(Eggman_Function133)
+					CallFunction(EggmanSLZ_Function133)
 					object.value9--
 					if object.value9 < 0
 						object.value9 = 1
@@ -145,7 +143,7 @@ event ObjectMain
 			else
 				GetTableValue(temp0, object.value9, Eggman_table31)
 				if object.xpos >= temp0
-					CallFunction(Eggman_Function133)
+					CallFunction(EggmanSLZ_Function133)
 					object.value9++
 					if object.value9 > 5
 						object.value9 = 4
@@ -155,7 +153,7 @@ event ObjectMain
 			end if
 		end if
 		object.ypos = object.value1
-		CallFunction(Eggman_Function134)
+		CallFunction(EggmanSLZ_Function134)
 		break
 	case 3
 		object.value4--
@@ -185,8 +183,6 @@ event ObjectMain
 			object.animationTimer = 0
 			object.value4 = 0
 			object.direction = FLIP_X
-			ResetObjectEntity(26, TypeName[Music Event], 1, 0, 0)
-			object[26].priority = PRIORITY_ACTIVE
 			object.state++
 		end if
 		break
@@ -215,7 +211,7 @@ event ObjectMain
 		break
 	case 7
 		object.ypos = object.value1
-		CallFunction(Eggman_Function134)
+		CallFunction(EggmanSLZ_Function134)
 		if object.value4 < 8
 			object.value4++
 		else
@@ -235,7 +231,7 @@ event ObjectMain
 		object.xpos += 0x40000
 		object.value1 -= 0x4000
 		object.ypos = object.value1
-		CallFunction(Eggman_Function134)
+		CallFunction(EggmanSLZ_Function134)
 		if object.outOfBounds == 1
 			object.type = TypeName[Blank Object]
 			object.priority = PRIORITY_ACTIVE_BOUNDS
@@ -271,7 +267,7 @@ event ObjectMain
 				end if		
 				if checkResult == 1
 					object.value13 = 1
-					CallFunction(Eggman_Function132)
+					CallFunction(EggmanSLZ_Function132)
 				end if
 			end if
 		next
@@ -294,20 +290,20 @@ event ObjectMain
 				end if	
 				if checkResult == 1
 					object.value13 = 1
-					CallFunction(Eggman_Function132)
+					CallFunction(EggmanSLZ_Function132)
 				end if
 			end if
-		next
+		next		
 		if object.value8 == 0
 			foreach (TypeName[SeeSaw], arrayPos0, ACTIVE_ENTITIES)
-				if object[arrayPos0].state != 3
+				if object[arrayPos0].state != 3	
 					temp0 = object[arrayPos0].xpos
 					temp1 = object[arrayPos0].ypos
 					object[arrayPos0].xpos = object[arrayPos0].value8
 					object[arrayPos0].ypos = object[arrayPos0].value9
 					BoxCollisionTest(C_TOUCH, object.entityPos, -20, -16, 20, 16, arrayPos0, -7, -7, 7, 7)
 					if checkResult == 1
-						CallFunction(Eggman_Function132)
+						CallFunction(EggmanSLZ_Function132)
 						CreateTempObject(TypeName[Smoke Puff], 0, object[arrayPos0].value8, object[arrayPos0].value9)
 						PlaySfx(SfxName[Explosion], 0)
 						object[arrayPos0].state = 3
@@ -455,26 +451,8 @@ event ObjectStartup
 	SpriteFrame(33, 0, 15, 11, 196, 12)
 	SpriteFrame(-12, 17, 24, 16, 213, 135)
 	SpriteFrame(-12, 17, 24, 16, 213, 43)
-	foreach (TypeName[Eggman], arrayPos0, ALL_ENTITIES)
-		if object[arrayPos0].type == TypeName[Eggman]
-			if options.gameMode == 2
-				temp0 = 8288
-				temp0 <<= 16
-				temp1 = 704
-				temp1 <<= 16
-				ResetObjectEntity(arrayPos0, TypeName[Sign Post], 0, temp0, temp1)
-				object[arrayPos0].frame = 1
-				object[arrayPos0].value0 = 16
-				object[arrayPos0].priority = PRIORITY_XBOUNDS
-				
-				arrayPos1 = arrayPos0
-				arrayPos1 -= 3
-				ResetObjectEntity(arrayPos1, TypeName[Blank Object], 0, 0, 0)
-				arrayPos1++
-				ResetObjectEntity(arrayPos1, TypeName[Blank Object], 0, 0, 0)
-				arrayPos1++
-				ResetObjectEntity(arrayPos1, TypeName[Blank Object], 0, 0, 0)
-			else
+	foreach (TypeName[SLZ Eggman], arrayPos0, ALL_ENTITIES)
+		if object[arrayPos0].type == TypeName[SLZ Eggman]
 				object[arrayPos0].priority = PRIORITY_XBOUNDS
 				arrayPos1 = arrayPos0
 				arrayPos1 -= 3
@@ -492,7 +470,7 @@ event ObjectStartup
 				object[arrayPos0].value0 = object[arrayPos0].xpos
 				object[arrayPos0].value1 = object[arrayPos0].ypos
 				object[arrayPos0].animation = 1
-				object[arrayPos0].value7 = 8
+				object[arrayPos0].value7 = MBZBossHits
 				temp0 = screen.xcenter
 				temp0 -= 160
 				temp0 -= 4
@@ -527,37 +505,8 @@ event ObjectStartup
 				temp1 += 0x500000
 				SetTableValue(temp1, 5, Eggman_table31)
 				object[arrayPos0].value5 = 1
-			end if
 		end if
 	next
-	switch stage.actNum
-		case 2
-			SetTileLayerEntry(15, 0, 28, 6)
-			SetTileLayerEntry(15, 0, 29, 6)
-			break
-		case 3
-			ResetObjectEntity(303, TypeName[Blank Object], 0, 0, 0)
-			if options.gameMode == 2
-				temp0 = 6
-				while temp0 < 10
-					GetTileLayerEntry(temp1, 0, 63, temp0)
-					SetTileLayerEntry(temp1, 0, 64, temp0)
-					SetTileLayerEntry(temp1, 0, 65, temp0)
-					SetTileLayerEntry(temp1, 0, 64, temp0)
-					SetTileLayerEntry(temp1, 0, 67, temp0)
-					SetTileLayerEntry(temp1, 0, 68, temp0)
-					SetTileLayerEntry(temp1, 0, 69, temp0)
-					SetTileLayerEntry(temp1, 0, 70, temp0)
-					SetTileLayerEntry(temp1, 0, 72, temp0)
-					SetTileLayerEntry(temp1, 0, 73, temp0)
-					SetTileLayerEntry(temp1, 0, 74, temp0)
-					SetTileLayerEntry(temp1, 0, 75, temp0)
-					SetTileLayerEntry(temp1, 0, 76, temp0)
-					temp0++
-				loop
-			end if
-			break
-	end switch
 end event
 
 event RSDKDraw

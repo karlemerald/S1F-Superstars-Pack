@@ -70,14 +70,8 @@ event ObjectMain
 		temp0 = stage.newXBoundary2
 		temp0 += 212
 		temp0 <<= 16
-		if object.xpos >= temp0	
-			if object[0].value37 == 5
-				recGoggles = 5
-			else
-				recGoggles = 0
-			end if
+		if object.xpos >= temp0
 			if options.gameMode == 2
-				recGoggles = 0
 				if stage.timeEnabled == 1
 					//object.type = TypeName[Blank Object]
 					object.state = 6
@@ -90,25 +84,15 @@ event ObjectMain
 					temp0 *= 0x1770
 					timeAttack.result += temp0
 					timeAttack.result += stage.milliSeconds
-					//stage.listPos--
-					switch stage.playerListPos
-						case 0
-							arrayPos0 = 500
-							break
-						case 1
-							arrayPos0 = 530
-							break
-						case 2
-							arrayPos0 = 560
-							break
-						case 5
-							arrayPos0 = 470
-							break						
-					end switch
-					if SuperTimeAttack == 1
-						arrayPos0 = 590
-					end if
-					arraypos0 += stage.listPos
+
+					if stage.activeList == BONUS_STAGE
+						switch stage.listPos
+							case 0
+								saveRAM[995] = 1
+								arrayPos0 = 650
+								break
+						end switch
+					end if					
 					if timeAttack.result < saveRAM[arrayPos0]
 						saveRAM[arrayPos0] = timeAttack.result
 						//object[9].value2 = timeAttack.result
@@ -119,30 +103,10 @@ event ObjectMain
 				end if
 				stage.timeEnabled = 0
 			else
-				object.value7 += 8
-				music.volume -= 2
-				SetClassicFade(0, 0, 0, object.value7)
-				if object.value7 >= 384
-					if options.gameMode == 1
-						arrayPos1 = options.saveSlot
-						arrayPos1 <<= 3
-						arrayPos1 += 1000
-						arrayPos1 += 4
-						saveRAM[arrayPos1] = 20
-					end if
-					stage.activeList = PRESENTATION_STAGE
-					stage.listPos = StageName[P - ENDING 1]
-					recAnimation = 0
-					if options.gameMode == 3
-						saveRAM[630] = player.score
-						temp0 = stage.playerListPos
-						temp0++
-						saveRAM[640] = temp0
-						stage.listPos = 6
-					end if
-					WriteSaveRAM()
-					LoadStage()
-				end if
+				object.state = 6
+				ResetObjectEntity(30, TypeName[Act Finish], 0, 0, 0)
+				object[30].drawOrder = 6
+				object[30].priority = PRIORITY_ACTIVE
 			end if
 		end if
 		break
@@ -156,33 +120,10 @@ event ObjectMain
 	end switch
 	if object.state == 3
 		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
-			BoxCollisionTest(C_TOUCH, object.entityPos, -23, -16, 23, 16, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)
-			if checkResult == 0
-				BoxCollisionTest(C_TOUCH, object.entityPos, -16, -21, 16, 21, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)			
-			end if	
-			if checkResult == 1
-				CallFunction(PlayerObject_CheckHit)
-			else
-				CallFunction(BossTarget)
-			end if		
-			if checkResult == 1
-				object.state = 4
-				object.animation = 3
-				PlaySfx(SfxName[Boss Hit], 0)
-				object.value4 = 0
-				if stage.debugMode == 0
-					if currentPlayer == 0
-						achievement.trigger = 11
-						//CallNativeFunction2(SetAchievement, 10, 100)
-					end if
-				end if
-			end if			
-		next
-		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
-			BoxCollisionTest(C_TOUCH, object.entityPos, -23, -16, 23, 16, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)
-			if checkResult == 0
-				BoxCollisionTest(C_TOUCH, object.entityPos, -16, -21, 16, 21, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)			
-			end if	
+				BoxCollisionTest(C_TOUCH, object.entityPos, -23, -16, 23, 16, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)
+				if checkResult == 0
+					BoxCollisionTest(C_TOUCH, object.entityPos, -16, -21, 16, 21, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)			
+				end if	
 			if checkResult == 1
 				CallFunction(PlayerObject_CheckHit)
 			else
@@ -227,7 +168,7 @@ event ObjectMain
 					end if
 				end if
 			end if			
-		next
+		next		
 	end if
 	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
 		if object.value6 > 0
@@ -372,7 +313,7 @@ event ObjectStartup
 	SpriteFrame(33, 0, 15, 11, 196, 12)
 	SpriteFrame(-28, -32, 27, 21, 131, 172)
 	SpriteFrame(-28, -11, 64, 35, 131, 193)
-	foreach (TypeName[Eggmobile], arrayPos0, ALL_ENTITIES)
+	foreach (TypeName[FZ Eggmobile], arrayPos0, ALL_ENTITIES)
 		object[arrayPos0].direction = FLIP_X
 		object[arrayPos0].priority = PRIORITY_ACTIVE
 		if object[arrayPos0].propertyValue == 1

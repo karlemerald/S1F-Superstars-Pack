@@ -37,6 +37,99 @@ event ObjectMain
 			object.type = TypeName[Blank Object]
 		end if
 	else
+
+		foreach (TypeName[Lightning Spark], arrayPos0, ALL_ENTITIES)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -17, -32, 17, 32, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
+			if checkResult == 1
+				object.type = TypeName[Blank Object]
+				PlaySfx(SfxName[Block Break], 0)
+				temp0 = object.propertyValue
+				temp0 <<= 1
+				temp0 += 3
+				temp1 = temp0
+				temp1++
+				temp2 = object.xpos
+				temp2 -= 0x80000
+				temp3 = object.xpos
+				temp3 += 0x80000
+				temp4 = object.ypos
+				temp4 -= 0x180000
+				if object[currentPlayer].xpos < object.xpos
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = -0x60000
+					object[tempObjectPos].yvel = -0x60000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = -0x40000
+					object[tempObjectPos].yvel = -0x50000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = -0x80000
+					object[tempObjectPos].yvel = -0x20000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = -0x60000
+					object[tempObjectPos].yvel = -0x10000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = -0x80000
+					object[tempObjectPos].yvel = 0x20000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = -0x60000
+					object[tempObjectPos].yvel = 0x10000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = -0x60000
+					object[tempObjectPos].yvel = 0x60000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = -0x40000
+					object[tempObjectPos].yvel = 0x50000
+					object[tempObjectPos].drawOrder = 4
+				else
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = 0x40000
+					object[tempObjectPos].yvel = -0x50000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = 0x60000
+					object[tempObjectPos].yvel = -0x60000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = 0x60000
+					object[tempObjectPos].yvel = -0x10000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = 0x80000
+					object[tempObjectPos].yvel = -0x20000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = 0x60000
+					object[tempObjectPos].yvel = 0x10000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = 0x80000
+					object[tempObjectPos].yvel = 0x20000
+					object[tempObjectPos].drawOrder = 4
+					temp4 += 0x100000
+					CreateTempObject(TypeName[Breakable Wall], 1, temp2, temp4)
+					object[tempObjectPos].xvel = 0x40000
+					object[tempObjectPos].yvel = 0x50000
+					object[tempObjectPos].drawOrder = 4
+					CreateTempObject(TypeName[Breakable Wall], 1, temp3, temp4)
+					object[tempObjectPos].xvel = 0x60000
+					object[tempObjectPos].yvel = 0x60000
+					object[tempObjectPos].drawOrder = 4
+				end if
+			end if	
+		next
+
 		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
 			checkResult = 0
 			if object[currentPlayer].state == PlayerObject_HandleRoll

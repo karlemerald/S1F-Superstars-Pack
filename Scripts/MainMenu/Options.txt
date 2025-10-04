@@ -1239,7 +1239,7 @@ function datamang.menu
 			delete.ticker = 0
 			StopSfx(SfxName[Warn], 0)
 			if menu.highlight < 0
-				menu.highlight = 9
+				menu.highlight = 10
 			end if
 		else	
 			if inputPress.down == 1
@@ -1247,7 +1247,7 @@ function datamang.menu
 				delete.check = 0
 				delete.ticker = 0
 			StopSfx(SfxName[Warn], 0)
-				if menu.highlight > 9
+				if menu.highlight > 10
 					menu.highlight = 0
 				end if
 			end if
@@ -1838,7 +1838,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 1
+		if menu.highlight == 2
 			text.drawline = 146
 		else
 			text.drawline = 175
@@ -1852,7 +1852,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 1
+		if menu.highlight == 2
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -1868,7 +1868,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 2
+		if menu.highlight == 3
 			text.drawline = 146
 		else
 			text.drawline = 145
@@ -1882,7 +1882,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 2
+		if menu.highlight == 3
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -1898,7 +1898,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 3
+		if menu.highlight == 4
 			text.drawline = 146
 		else
 			text.drawline = 148
@@ -1912,7 +1912,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 3
+		if menu.highlight == 4
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -1928,7 +1928,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 4
+		if menu.highlight == 5
 			text.drawline = 146
 		else
 			text.drawline = 149
@@ -1942,7 +1942,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 4
+		if menu.highlight == 5
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -1958,7 +1958,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 5
+		if menu.highlight == 6
 			text.drawline = 146
 		else
 			text.drawline = 150
@@ -1972,7 +1972,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 5
+		if menu.highlight == 6
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -1988,7 +1988,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 6
+		if menu.highlight == 7
 			text.drawline = 146
 		else
 			text.drawline = 151
@@ -2002,7 +2002,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 6
+		if menu.highlight == 7
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -2018,7 +2018,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 7
+		if menu.highlight == 8
 			text.drawline = 146
 		else
 			text.drawline = 152
@@ -2032,7 +2032,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 7
+		if menu.highlight == 8
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -2048,7 +2048,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 8
+		if menu.highlight == 9
 			text.drawline = 146
 		else
 			text.drawline = 153
@@ -2062,7 +2062,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 8
+		if menu.highlight == 9
 			text.drawline = 147
 		else
 			text.drawline = 155
@@ -2078,7 +2078,7 @@ function datamang.draw
 	text.xpos = text.margin
 	text.drawalign = TEXT_LEFT_ALIGN
 	if delete.check == 1
-		if menu.highlight == 9
+		if menu.highlight == 10
 			text.drawline = 146
 		else
 			text.drawline = 154
@@ -2092,7 +2092,7 @@ function datamang.draw
 	text.xpos -= text.margin.right
 	text.drawalign = TEXT_CENTER_ALIGN
 	if delete.check == 2
-		if menu.highlight == 9
+		if menu.highlight == 10
 			text.drawline = 147
 		else
 			text.drawline = 155

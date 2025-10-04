@@ -30,23 +30,16 @@ function FZEggman_Function158
 	temp0 |= checkResult
 	CheckEqual(object[currentPlayer].animation, ANI_GLIDING_STOP)
 	temp0 |= checkResult
-	CheckEqual(object[currentPlayer].animation, ANI_HAMMER_JUMP)
-	temp0 |= checkResult
-	CheckEqual(object[currentPlayer].animation, ANI_HAMMER_SPEEN)
-	temp0 |= checkResult
-	
 	if temp0 == 1
 		object[currentPlayer].xvel = 0x30000
 		if object[currentPlayer].xpos < object.xpos
 			FlipSign(object[currentPlayer].xvel)
 		end if
 		object[currentPlayer].speed = object[currentPlayer].xvel
-		if stage.playerListPos == 2
-			if object[currentPlayer].animation == ANI_GLIDING
-				object[currentPlayer].animation = ANI_GLIDING_DROP
-				object[currentPlayer].state = PlayerObject_KnuxGlideDrop
-			end if
-		end if	
+		if object[currentPlayer].animation == ANI_GLIDING
+			object[currentPlayer].animation = ANI_GLIDING_DROP
+			object[currentPlayer].state = PlayerObject_KnuxGlideDrop
+		end if
 		checkResult = 1
 	else
 		checkResult = 0
@@ -57,6 +50,7 @@ end function
 event ObjectMain
 	switch object.state
 	case 0
+		object.priority = PRIORITY_ACTIVE
 		temp1 = screen.xcenter
 		temp2 = temp1
 		if temp1 == 160
@@ -68,6 +62,9 @@ event ObjectMain
 		temp0 += temp1
 		temp0 += temp2
 		stage.newXBoundary2 = temp0
+		temp0 = stage.newYBoundary2
+		temp0 -= screen.ysize
+		stage.newYBoundary1 = temp0
 		temp0 = object.entityPos
 		object[+1].value0 = temp0
 		object[+2].value0 = temp0
@@ -160,6 +157,7 @@ event ObjectMain
 		temp1 = 0
 		while temp0 < 4
 			CreateTempObject(TypeName[Plasma Ball], 0, object[+5].xpos, object[+5].ypos)
+			object[tempObjectPos].drawOrder = 3
 			object[tempObjectPos].inkEffect = INK_ADD
 			object[tempObjectPos].alpha = 0
 			object[tempObjectPos].value1 = 4
@@ -200,7 +198,7 @@ event ObjectMain
 	case 7
 		object.xpos += object.xvel
 		object.ypos += object.yvel
-		ObjectTileCollision(CSIDE_FLOOR, 0, 28, 0)
+		ObjectTileCollision(CSIDE_FLOOR, 0, 32, 0)
 		if checkResult == 0
 			object.yvel += 0x1000
 		else
@@ -322,7 +320,7 @@ event ObjectMain
 			object.direction = FLIP_X
 		end if
 		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
-			BoxCollisionTest(C_TOUCH, object.entityPos, -33, -37, 33, 6, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -33, -37, 33, 6, currentPlayer, object[currentPlayer].value40, object[currentPlayer].value38, object[currentPlayer].value41, object[currentPlayer].value39)
 			if checkResult == 1
 				CallFunction(FZEggman_Function158)
 			else
@@ -338,7 +336,7 @@ event ObjectMain
 					end if
 				end if
 			end if
-		next
+		next	
 		foreach (TypeName[Ears], arrayPos0, ACTIVE_ENTITIES)
 			BoxCollisionTest(C_TOUCH, object.entityPos, -33, -37, 33, 6, arrayPos0, object[arrayPos0].value40, object[arrayPos0].value38, object[arrayPos0].value41, object[arrayPos0].value39)
 			if checkResult == 1
@@ -360,7 +358,7 @@ event ObjectMain
 					end if
 				end if
 			end if
-		next
+		next			
 	end if
 	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
 		temp0 = object[currentPlayer].collisionRight
@@ -407,9 +405,9 @@ event ObjectStartup
 	SpriteFrame(-30, -24, 60, 44, 289, 165)
 	SpriteFrame(-24, -23, 54, 43, 236, 221)
 	SpriteFrame(-21, -25, 51, 52, 296, 213)
-	foreach (TypeName[FZ Eggman], arrayPos0, ALL_ENTITIES)
-		object[arrayPos0].priority = PRIORITY_ACTIVE
-	next
+	//foreach (TypeName[FZ Eggman], arrayPos0, ALL_ENTITIES)
+		
+	//next
 end event
 
 event RSDKDraw

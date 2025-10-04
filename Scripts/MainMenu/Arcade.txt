@@ -9,6 +9,7 @@
 //-------Aliases-------//
 
 private alias 175 : game.modes.alpha
+private alias 7 : CharSelectTotal
 
 private alias object.value0 : fade.control
 private alias object.value1 : char.select
@@ -45,7 +46,18 @@ private table Arcade_table2
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
 end table
 
+private table Arcade_CharTable
+	26, 27, 28, 65, 68, 69, 70 // portraits
+	23, 24, 25, 63, 74, 75, 76 // highlighted
+end table
 
+private table Arcade_CharTableHeads
+	18, 19, 20, 21, 19, 21, 64, 0, 0, 0, 0, 0, 0, 0, 71, 72, 73
+end table
+
+private table Arcade_PlayerList
+	0, 1, 2, 5, 13, 15, 14
+end table
 
 event ObjectMain
 
@@ -115,9 +127,9 @@ event ObjectMain
 				end if
 			end if
 			while char.select < 0
-				char.select += 4
+				char.select += CharSelectTotal
 			loop
-			char.select %= 4
+			char.select %= CharSelectTotal
 			
 			CheckEqual(inputPress.start, 1)
 			temp0 = checkResult
@@ -284,11 +296,9 @@ event ObjectDraw
 				specialStage.listPos = 0
 				specialStage.emeralds = 0
 				specialStage.nextZone = 0
-					if char.select == 3
-						stage.playerListPos = 5
-					else
-						stage.playerListPos = char.select
-					end if
+
+				GetTableValue(stage.playerListPos, char.select, Arcade_PlayerList)
+				
 				saveRAM[620] = char.select
 				WriteSaveRAM()
 				LoadStage()
@@ -416,12 +426,8 @@ event ObjectDraw
 				DrawNumbers(8, temp4, temp2, saveRAM[arrayPos0], 6, 8, 1)
 			end if
 			arrayPos0 += 10
-			temp1 = saveRAM[arrayPos0]
-           			if temp1 == 6
-				temp1 = 64
-			else
-				temp1 += 18
-			end if
+			GetTableValue(temp1, saveRAM[arrayPos0], Arcade_CharTableHeads)
+
 			temp4 += 41
 			if screen.xsize == 320
 				temp4 -= 10
@@ -439,23 +445,21 @@ event ObjectDraw
 		else
 			DrawSpriteScreenXY(22, temp3, 53)
 		end if
-		temp0 = char.select
-			if char.select == 3
-				temp0 += 60
-			else
-				temp0 += 23
-			end if
-		end if
+		temp1 = char.select
+		temp1 += CharSelectTotal
+		GetTableValue(temp0, temp1, Arcade_CharTable)
+
+		temp3 -= 15
 		if screen.xsize == 320
 			DrawSpriteScreenXY(temp0, temp3, 197)
 		else
 			DrawSpriteScreenXY(temp0, temp3, 53)
 		end if
-		if char.select == 3
-			temp0 += 2
-		else
-			temp0 += 3	
-		end if		
+		DrawSpriteScreenXY(77, temp3, 53)
+		DrawSpriteScreenXY(78, temp3, 53)
+		temp3 += 15
+
+		GetTableValue(temp0, char.select, Arcade_CharTable)
 		temp1 = screen.xcenter
 		if screen.xsize == 320
 			temp1 += 84
@@ -582,6 +586,8 @@ event ObjectStartup
 	LoadSpriteSheet("Menus/ArcadeMode.gif")
 	ReadSaveRAM()
 	CallFunction(ScoreOrder)
+	LoadPalette("SpecialStage.act", 0, 0, 0, 95)
+	
 	switch saved.language
 		case 0 //english
 			SpriteFrame(0, 0, 104, 42, 1, 45) //0 Top Border
@@ -626,10 +632,10 @@ event ObjectStartup
 	SpriteFrame(0, 0, 17, 13, 287, 69) //21  Knuckles
 	
 	//Character Menu
-	SpriteFrame(-80, 0, 78, 16, 253, 83) //22 Grey Peps
-	SpriteFrame(-80, 0, 17, 16, 332, 83) //23 Sonic Highlighted
-	SpriteFrame(-59, 1, 15, 15, 350, 84) //24 Tails Highlighted
-	SpriteFrame(-41, 1, 18, 15, 366, 84) //25 Knuckles Highlighted
+	SpriteFrame(-80, 0, 0, 0, 253, 83) //22 Grey Peps
+	SpriteFrame(-20, 0, 17, 16, 332, 83) //23 Sonic Highlighted
+	SpriteFrame(-18, 1, 15, 15, 350, 84) //24 Tails Highlighted
+	SpriteFrame(-20, 1, 18, 15, 366, 84) //25 Knuckles Highlighted
 	
 	//Portraits
 	SpriteFrame(-55, -74, 103, 148, 1, 363) //26 Sonic
@@ -733,8 +739,26 @@ event ObjectStartup
 	SpriteFrame(0, 0, 36, 36, 432, 1) // 66 Touch Back Button
 
 	SpriteFrame(0, 0, 200, 29, 1, 235) //67 Achievement
+
+	// portraits
+	SpriteFrame(-56, -72, 112, 144, 1, 512)   //68 Trip
+	SpriteFrame(-67, -65, 134, 129, 114, 513) //69 Fang
+	SpriteFrame(-45, -77, 90, 153, 249, 514)  //70 Rabbit
 	
-	
+	// heads
+	SpriteFrame(0, 0, 14, 13, 354, 69) // 71 Trip
+	SpriteFrame(0, 0, 16, 13, 369, 69) // 72 Fang
+	SpriteFrame(0, 0, 16, 13, 386, 69) // 73 Rabbit
+
+	// highlighted
+	SpriteFrame(-19, 1, 16, 15, 404, 84) // 74 Trip
+	SpriteFrame(-20, 0, 18, 16, 421, 83) // 75 Fang
+	SpriteFrame(-20, 0, 18, 16, 440, 83) // 76 Rabbit
+
+	SpriteFrame(-30, 4, 5, 10, 422, 100) // 77 LEFT ARROW
+	SpriteFrame(2, 4, 5, 10, 428, 100) // 78 RIGHT ARROW
+
+
 	SetMusicTrack("Arcade.ogg", 0, 1)
 	
 	//from logo - background

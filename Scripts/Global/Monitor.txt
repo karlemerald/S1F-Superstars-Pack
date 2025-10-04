@@ -234,8 +234,8 @@ event ObjectMain
 					temp0 |= checkResult				
 				end if
 				
-				if stage.playerListPos == 15
-					CheckEqual(object[currentPlayer].animation, ANI_GLIDING_DROP)
+				if stage.playerListPos == PlayerName[FANG]
+					CheckEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
 					temp0 |= checkResult				
 				end if
 				
@@ -251,14 +251,14 @@ event ObjectMain
 									object[currentPlayer].state = PlayerObject_HandleAir	
 									object[currentPlayer].animation = ANI_WALKING					
 								else
-									if object[currentPlayer].animation != ANI_GLIDING_DROP
+									if object[currentPlayer].animation != ANI_FANG_BOUNCE
 										object[currentPlayer].yvel += object[currentPlayer].value25
 										object[currentPlayer].yvel += object[currentPlayer].value25
 										FlipSign(object[currentPlayer].yvel)
 									end if									
 								end if
 							else
-								if object[currentPlayer].animation != ANI_GLIDING_DROP
+								if object[currentPlayer].animation != ANI_FANG_BOUNCE
 									object[currentPlayer].yvel += object[currentPlayer].value25
 									object[currentPlayer].yvel += object[currentPlayer].value25
 									FlipSign(object[currentPlayer].yvel)
@@ -302,7 +302,7 @@ event ObjectMain
 		end if	
 	next
 
-	if stage.playerListPos == 14
+	if stage.playerListPos >= PlayerName[TRIP]
 		foreach (TypeName[Monitor], arrayPos0, ALL_ENTITIES)
 			if object[arrayPos0].propertyValue == 13
 				object[arrayPos0].type = TypeName[Blank Object]

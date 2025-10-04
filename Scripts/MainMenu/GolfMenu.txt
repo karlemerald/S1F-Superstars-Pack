@@ -259,11 +259,23 @@ event ObjectDraw
 		if char.select == 6
 			temp0 = 48
 		end if
+		if char.select == 4
+			temp0 = 81
+		end if
+		if char.select == 5
+			temp0 = 83
+		end if		
 		DrawSpriteScreenFX(temp0, FX_INK, 32, 55)
 		temp0 += 4
 		if char.select == 6
 			temp0 = 49
-		end if		
+		end if	
+		if char.select == 4
+			temp0 = 82
+		end if
+		if char.select == 5
+			temp0 = 84
+		end if					
 		DrawSpriteScreenXY(temp0, 32, 55)
 
 		if char.select == 6
@@ -318,6 +330,18 @@ event ObjectDraw
 		else
 			temp0 += 4
 			temp3 = 190
+			if char.select == 4
+				temp0 = 79
+				temp3 -= 43
+				DrawSpriteScreenXY(15, temp3, 160)
+				temp3 += 43
+			end if
+			if char.select == 5
+				temp0 = 80
+				temp3 -= 44
+				DrawSpriteScreenXY(15, temp3, 160)
+				temp3 += 44				
+			end if
 			DrawSpriteScreenXY(temp0, temp3, 160)
 		end if	
 		DrawSpriteScreenXY(15, 190, 160)
@@ -509,8 +533,8 @@ event ObjectStartup
 	SpriteFrame(0, 0, 48, 48, 648, 1) //46 lazy go
 	SpriteFrame(0, 0, 36, 36, 648, 95) //47 Back Arrow back
 	
-	SpriteFrame(-6, 0, 89, 156, 1, 602) //48 Rabbit
-	SpriteFrame(2, 0, 85, 156, 107, 602) //49 Rabbit
+	SpriteFrame(-3, 0, 90, 153, 249, 602) //48 Rabbit
+	SpriteFrame(-2, 0, 94, 158, 596, 602) //49 Rabbit
 
 	SpriteFrame(0, 0, 9, 12, 240, 14) //50 A
 	SpriteFrame(0, 0, 8, 12, 129, 27)
@@ -541,7 +565,18 @@ event ObjectStartup
 	SpriteFrame(0, 0, 7, 12, 1, 1) 
 	SpriteFrame(0, 0, 3, 12, 225, 1)		
 	SpriteFrame(0, 0, 7, 12, 217, 1) 
-	
+
+	//Names
+	SpriteFrame(-32, 0, 32, 15, 1, 354) //79 Trip
+	SpriteFrame(-38, 0, 38, 15, 34, 354) //80 Fang
+
+	SpriteFrame(0, 0, 112, 144, 1, 602) // 81 Trip Portrait
+	SpriteFrame(0, 0, 115, 146, 340, 602) // 82 Trip Shadow
+
+	SpriteFrame(-25, 0, 134, 129, 114, 602) // 83 Fang Portrait
+	SpriteFrame(-25, 0, 139, 134, 456, 602) // 84 Fang Shadow
+
+
 	SetMusicTrack("GolfMenu.ogg", 0, 1)
 	
 	CallFunction(ScoreOrder)

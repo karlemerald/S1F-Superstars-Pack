@@ -29,6 +29,7 @@
     <variable name="fangGunEnabled" value="0" />
     <variable name="fangGunTimer" value="0" />
     <variable name="FangCooldown" value="0" />
+    <variable name="firebreathtimer" value="0" />
   </variables>
   <sounds>
     <soundfx name="TripJump" path="TripDoubleJump.ogg" />

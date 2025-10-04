@@ -284,6 +284,160 @@ function LZSetup_Function96
 	loop
 end function
 
+function LZSetup_Function67
+	temp0 = 0
+	GetPaletteEntry(1, 18, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 17, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 68, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 69, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+	temp0++
+	while temp0 < 64
+		GetPaletteEntry(0, 18, temp1)
+		GetPaletteEntry(1, 18, temp2)
+		CallFunction(LZSetup_Function95)
+		GetTableValue(temp1, temp0, PlayerObject_TripSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 224
+		temp1 /= object.value6
+		temp2 *= 224
+		temp2 /= object.value7
+		temp3 *= 224
+		temp3 /= object.value8
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 17, temp1)
+		GetPaletteEntry(1, 17, temp2)
+		CallFunction(LZSetup_Function95)
+		GetTableValue(temp1, temp0, PlayerObject_TripSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 232
+		temp1 /= object.value6
+		temp2 *= 232
+		temp2 /= object.value7
+		temp3 *= 232
+		temp3 /= object.value8
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 68, temp1)
+		GetPaletteEntry(1, 68, temp2)
+		CallFunction(LZSetup_Function95)
+		GetTableValue(temp1, temp0, PlayerObject_TripSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 244
+		temp1 /= object.value6
+		temp2 *= 244
+		temp2 /= object.value7
+		temp3 *= 244
+		temp3 /= object.value8
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 69, temp1)
+		GetPaletteEntry(1, 69, temp2)
+		CallFunction(LZSetup_Function95)
+		GetTableValue(temp1, temp0, PlayerObject_TripSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 256
+		temp1 /= object.value6
+		temp2 *= 256
+		temp2 /= object.value7
+		temp3 *= 256
+		temp3 /= object.value8
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TripSuperAltPal)
+		temp0++
+	loop
+end function
+
 
 function LZSetup_Function97
 	temp0 = 0
@@ -1070,6 +1224,7 @@ event ObjectStartup
 	CallFunction(LZSetup_AmySuperPal)
 	CallFunction(LZSetup_RabbitSuperPal)
 	CallFunction(LZSetup_FangSuperPal)
+	CallFunction(LZSetup_Function67)
 	LoadPalette("ElectricFlash.act", 2, 0, 0, 256)
 	LZSetup_value29 = 0
 	if options.attractMode == 1

@@ -1051,6 +1051,14 @@ function PlayerObject_CheckHit
 		temp0 |= checkResult
 		CheckEqual(object[currentPlayer].animation, ANI_HAMMER_SPEEN)
 		temp0 |= checkResult
+	if stage.playerListPos == 15
+		if object[currentPlayer].ypos < object.ypos
+			CheckEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
+			temp0 |= checkResult
+			CheckEqual(object[currentPlayer].animation, ANI_BOUNCE_SHOOT)
+			temp0 |= checkResult
+		end if
+	end if
 	if temp1 == 1
 		CheckGreater(object[currentPlayer].ypos, object.ypos)
 		temp0 |= checkResult
@@ -1070,6 +1078,12 @@ function PlayerObject_CheckHit
 				object[currentPlayer].state = PlayerObject_KnuxGlideDrop
 			end if
 		end if
+		if object[currentPlayer].animation == ANI_FANG_BOUNCE
+			object[currentPlayer].frame = 1
+			player[currentPlayer].doubleJumpState = 1
+			object[currentPlayer].gravity = GRAVITY_AIR
+			object[currentPlayer].state = PlayerObject_HandleAir			
+		end if		
 		checkResult = 1
 	else
 		if object[currentPlayer].state != PlayerObject_Death
@@ -1118,6 +1132,8 @@ function PlayerObject_BadnikBreak
 		if object[currentPlayer].ypos < object.ypos
 			CheckEqual(object[currentPlayer].animation, ANI_FANG_BOUNCE)
 			temp0 |= checkResult
+			CheckEqual(object[currentPlayer].animation, ANI_BOUNCE_SHOOT)
+			temp0 |= checkResult
 		end if
 	end if
 
@@ -1151,6 +1167,12 @@ function PlayerObject_BadnikBreak
 			end if
 		else
 			object[currentPlayer].yvel += 0x10000
+		end if
+		if object[currentPlayer].animation == ANI_FANG_BOUNCE
+			object[currentPlayer].frame = 1
+			player[currentPlayer].doubleJumpState = 1
+			object[currentPlayer].gravity = GRAVITY_AIR
+			object[currentPlayer].state = PlayerObject_HandleAir			
 		end if
 		if options.competition == 0
 			temp0 = currentPlayer
@@ -3333,6 +3355,13 @@ function PlayerObject_HandleAir
 					else	
 						object.frame = 0
 					end if
+					if object.controlMode >= 0
+						if inputDown.buttonC == 1
+							if FangCoolDown == 0
+								CallFunction(PlayerObject_HandleCorkShoot)
+							end if
+						end if
+					end if							
 					break
 				end switch
 			end if
@@ -5950,7 +5979,7 @@ function PlayerObject_FangTrips
 		object.yvel += 0x4000
 		object.value1++
 		if object.value1 >= 30
-			if object.collisionMode == CMODE_FLOOR
+			if object.gravity == GRAVITY_GROUND
 				object.frame++
 			end if
 		end if	
@@ -6316,6 +6345,7 @@ function PlayerObject_HandleRabbitGrab
 				object.state = PlayerObject_HandleGround
 			else	
 				object.animation = ANI_JUMPING
+				object.iypos -= player.jumpOffset
 				object.state = PlayerObject_HandleAir
 				CallFunction(PlayerObject_HandleAirMovement)
 			end if	
@@ -6428,14 +6458,22 @@ function PlayerObject_DragonFly
 	object.animation = 1	
 	FireBreath = false
 
-	if object.jumpHold == 1
+	CheckEqual(object.jumpHold, 1)
+	temp0 = checkResult
+	CheckLower(firebreathtimer, 200)
+	temp0 &= checkResult
+	if temp0 == 1
 		object.animation = 3
 		FireBreath = true
 		if object.value1 == 0
 			CreateTempObject(TypeName[Lightning Spark], 2, object[0].xpos, object[0].ypos)
 			object.value1 = 1
 		end if	
+		firebreathtimer++
 	else
+		if object.jumpHold == 0
+			firebreathtimer = 0
+		end if	
 		object.value1 = 0
 	end if
 
