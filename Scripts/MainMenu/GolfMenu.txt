@@ -11,6 +11,7 @@ public alias saveRAM[274] : saved.region
 public alias saveRAM[286] : saved.language
 
 public alias saveRAM[295] : saved.mobile
+public alias saveRAM[307] : saved.FangName
 private alias 175 : game.modes.alpha
 
 private alias object.value0 : fade.control
@@ -568,7 +569,20 @@ event ObjectStartup
 
 	//Names
 	SpriteFrame(-32, 0, 32, 15, 1, 354) //79 Trip
-	SpriteFrame(-38, 0, 38, 15, 34, 354) //80 Fang
+	switch saved.FangName
+	case 0
+	case 1
+		SpriteFrame(-38, 0, 38, 15, 34, 354) //80 Fang
+		break
+	case 2
+		SpriteFrame(-40, 0, 40, 15, 73, 354) //80 Nack
+		break
+	case 3
+		SpriteFrame(-30, 0, 30, 15, 114, 354) //80 Jet
+		break
+	
+	end switch
+		
 
 	SpriteFrame(0, 0, 112, 144, 1, 602) // 81 Trip Portrait
 	SpriteFrame(0, 0, 115, 146, 340, 602) // 82 Trip Shadow

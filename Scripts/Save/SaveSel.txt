@@ -43,6 +43,7 @@ public alias saveRAM[285] : saved.GHZwater
 public alias saveRAM[286] : saved.language
 public alias saveRAM[295] : saved.mobile
 public alias saveRAM[296] : saved.transmobile
+public alias saveRAM[307] : saved.FangName
 
 //Saveslot 0	0-7
 //Saveslot 1	8-15

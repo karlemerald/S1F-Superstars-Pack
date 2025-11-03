@@ -24,6 +24,7 @@ private alias object.value32 : display.minutes
 
 private alias object.value33 : touch.fade
 private alias object.value34 : buttonoffset
+private alias object.value35 : dragonbuttonoffset
 //object.value35 reserved for display of game mode info
 
 // Function declarations
@@ -41,6 +42,7 @@ reserve function TouchControls
 reserve function SuperButton
 reserve function LivesHud
 reserve function RabbitName
+reserve function SuperButtonDragon
 
 // Static Values
 
@@ -485,6 +487,51 @@ function SuperButton
 	end if
 end function
 
+function SuperButtonDragon
+	if saved.mobile == 0
+		object.inkEffect = INK_ALPHA
+		temp0 = stage.timeEnabled
+		CheckNotEqual(DragonState, 1)
+		temp0 &= checkResult
+		CheckNotEqual(object[30].type, TypeName[Act Finish])
+		temp0 &= checkResult
+		CheckEqual(saved.superStates, 1)
+		temp0 &= checkResult
+		CheckEqual(PlayerObject_SuperState, 1)
+		temp0 &= checkResult
+		CheckEqual(saved.mobile, 0)
+		temp0 &= checkResult
+		if temp0 == 1
+			if dragonbuttonoffset < 52
+				dragonbuttonoffset += 8
+			end if
+			if dragonbuttonoffset >= 52
+				dragonbuttonoffset = 52
+			end if
+		else
+			if dragonbuttonoffset > 0
+				dragonbuttonoffset -= 8
+			end if
+			if dragonbuttonoffset <= 0
+				dragonbuttonoffset = 0
+			end if
+		end if
+		temp0 = screen.xsize
+		temp0 -= dragonbuttonoffset		
+		CheckEqual (object[0].value35, 1)
+		temp1 = checkResult
+		CheckEqual (object[0].value8, 0)
+		temp1 &= checkResult
+		if temp1 == 1
+			object.alpha = 255
+		else
+			object.alpha = 155
+		end if
+		DrawSpriteScreenFX(46, FX_INK,temp0, 9)
+		DrawSpriteScreenXY(109, temp0, 9)
+	end if
+end function
+
 function LivesHud
 	CheckEqual(saved.lives, 0)
 	temp1 = checkResult
@@ -567,6 +614,9 @@ end function
 
 function HUD_DrawUsual
 	CallFunction(SuperButton)
+	if stage.playerListPos == PlayerName[Trip]
+		CallFunction(SuperButtonDragon)
+	end if
 	DrawSpriteScreenXY(10, 17, 9)
 	temp5 = 0
 	temp1 = stage.minutes
@@ -714,6 +764,9 @@ end function
 
 function HUD_DrawArcadeMode
 	CallFunction(SuperButton)
+	if stage.playerListPos == PlayerName[Trip]
+		CallFunction(SuperButtonDragon)
+	end if
 
 	DrawSpriteScreenXY(10, 17, 9)
 	temp5 = 0
@@ -971,6 +1024,7 @@ event ObjectStartup
 	SpriteFrame(0, 0, 27, 7, 464, 167) //106 NA CK
 	SpriteFrame(0, 0, 27, 7, 464, 215) //107 J E T
 	SpriteFrame(0, 0, 0, 0, 0, 0) //108 Blank
+	SpriteFrame(20, 0, 16, 16, 266, 191) //109 
 
 	foreach (TypeName[HUD], arrayPos0, ALL_ENTITIES)
 		switch options.gameMode

@@ -5044,6 +5044,11 @@ end function
 
 
 function PlayerObject_Knockback
+
+	if object.animation == 49
+		object.animation = ANI_HURT
+	end if
+
 	if object.gravity == GRAVITY_AIR		
 		player.hitboxTop = HITBOX_AUTO
 		player.hitboxBottom = HITBOX_AUTO

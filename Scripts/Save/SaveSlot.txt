@@ -1694,7 +1694,20 @@ event ObjectStartup
 		temp0++
 	loop
 	SpriteFrame(0, 0, 23, 6, 344, 27) //212 TRIP
-	SpriteFrame(0, 0, 24, 6, 368, 20) //213 FANG
+	switch saved.FangName
+	case 0
+	case 1
+		SpriteFrame(0, 0, 24, 6, 368, 20) //213 FANG
+		break
+	case 2
+		SpriteFrame(0, 0, 23, 6, 388, 27) //213 FANG
+		break	
+	case 3
+		SpriteFrame(0, 0, 19, 6, 368, 27) //213 FANG
+		break
+	
+	end switch
+		
 	SpriteFrame(-20, -30, 40, 30, 584, 63) //214 FANG PLACHOLDER
 	SpriteFrame(-14, -1, 14, 13, 538, 498)  //215 Trip Life
 	SpriteFrame(-16, -2, 16, 24, 521, 487) //216 Trip Continue

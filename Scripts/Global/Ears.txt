@@ -239,6 +239,49 @@ event ObjectMain
 				object.timer++	
 			end if					
 		end if
+
+		ObjectTileCollision(CSIDE_RWALL, -10, 0, object[0].collisionPlane)
+		temp0 = checkResult
+		ObjectTileCollision(CSIDE_RWALL, -12, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_RWALL, 0, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_RWALL, -16, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_RWALL, -18, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_RWALL, -20, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+
+		ObjectTileCollision(CSIDE_LWALL, 10, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_LWALL, 12, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_LWALL, 0, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_LWALL, 16, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_LWALL, 18, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_LWALL, 20, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+
+		ObjectTileCollision(CSIDE_ROOF, 0, 10, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_ROOF, 0, 12, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_ROOF, 0, 0, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_ROOF, 0, 16, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_ROOF, 0, 18, object[0].collisionPlane)
+		temp0 |= checkResult
+		ObjectTileCollision(CSIDE_ROOF, 0, 20, object[0].collisionPlane)
+		temp0 |= checkResult
+
+		if temp0 == 1
+			object[-1].state = 2
+		end if
 		break	
 	end switch	
 

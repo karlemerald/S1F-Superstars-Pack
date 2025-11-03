@@ -316,7 +316,13 @@ event ObjectStartup
 				break
 			case 14
 				SpriteFrame(-8, -10, 16, 16, 117, 85)
-				break				
+				break
+			case 13
+				SpriteFrame(-8, -9, 16, 16, 117, 100)
+				break			
+			case 15
+				SpriteFrame(-8, -9, 16, 16, 117, 115)
+				break									
 			default	
 				SpriteFrame(-8, -10, 16, 16, 51, 45)
 				break
